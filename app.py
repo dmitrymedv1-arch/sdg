@@ -947,7 +947,7 @@ st.markdown("""
 <div style="text-align: center; margin-bottom: 2rem;">
     <div class="status-badge" style="margin-bottom: 1rem;">⚛️ ACTIVE · HYBRID CLASSIFIER</div>
     <div class="neon-text">SDG SPECTRAL ANALYZER</div>
-    <div style="color: #666; font-size: 0.8rem; letter-spacing: 2px; margin-top: 0.5rem;">
+    <div style="color: #ffffff; font-size: 0.8rem; letter-spacing: 2px; margin-top: 0.5rem;">
         CHEMICAL & MATERIALS SCIENCE EDITION • 3200+ TERMS • WORD BOUNDARY MATCHING • CONTEXT AWARE • ENERGY MATERIALS OPTIMIZED
     </div>
 </div>
@@ -1184,7 +1184,7 @@ with col_right:
     
     elif analyze_btn and not combined_text.strip():
         st.markdown("""
-        <div style="text-align: center; padding: 3rem; color: #666;">
+        <div style="text-align: center; padding: 3rem; color: #ffffff;">
             <div style="font-size: 3rem;">⚠️</div>
             <div>NO SPECTRAL INPUT DETECTED</div>
             <div style="font-size: 0.7rem;">PLEASE PROVIDE ABSTRACT OR KEYWORDS</div>
