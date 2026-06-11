@@ -1732,13 +1732,13 @@ with col_right:
         if analysis_result.get("multi_label"):
             multi_label_html = '<div class="status-badge" style="margin-top: 0.5rem;">🔗 MULTI-LABEL DETECTED</div>'
         
+        
         st.markdown(f"""
         <div class="hologram-card" style="text-align: center;">
             <div style="font-size: 0.8rem; color: #888; letter-spacing: 2px;">PRIMARY SDG CLASSIFICATION</div>
             <div style="font-size: 5rem; margin: 1rem 0;">{SDG_ICONS.get(primary_sdg, '🎯')}</div>
             <div class="digital-display" style="font-size: 4rem;">SDG {primary_sdg}</div>
             <div style="font-size: 1.3rem; font-weight: 500; color: #00ff88; margin-top: 0.5rem;">{SDG_NAMES.get(primary_sdg, 'Unknown')}</div>
-            
             <div style="margin: 1.5rem 0;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
                     <span style="font-size: 0.7rem;">⚡ CONFIDENCE INDEX</span>
@@ -1748,7 +1748,6 @@ with col_right:
                     <div style="width: {primary_confidence}%; height: 100%; background: #00ff88;"></div>
                 </div>
             </div>
-            
             <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap;">
                 <div class="status-badge">🎯 SPECTRAL MATCH</div>
                 <div class="status-badge">🔬 HYBRID MODE</div>
