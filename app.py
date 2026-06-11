@@ -1002,7 +1002,7 @@ with col_left:
     analyze_btn = st.button("⚡ INITIATE SPECTRAL ANALYSIS", use_container_width=True)
 
 with col_right:
-    st.markdown('<div class="glass-panel" style="min-height: 500px;">', unsafe_allow_html=True)
+    st.markdown('<div class="glass-panel">', unsafe_allow_html=True)
     st.markdown('<div class="status-badge" style="margin-bottom: 1rem;">🌀 ANALYSIS OUTPUT</div>', unsafe_allow_html=True)
     
     if analyze_btn and combined_text.strip():
