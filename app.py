@@ -1732,19 +1732,24 @@ with col_right:
         
         multi_label_html = ""
         if analysis_result.get("multi_label"):
-            multi_label_html = '<div class="status-badge" style="margin-top: 0.5rem;">🔗 MULTI-LABEL DETECTED</div>'
+            multi_label_html = '<span class="status-badge" style="margin-top: 0.5rem; display: inline-block;">🔗 MULTI-LABEL DETECTED</span>'
         
-        confidence_bar_html = f"""
-        <div style="margin: 1.5rem 0;">
-            <div style="display: flex; justify-content: space-between; font-size: 0.7rem; margin-bottom: 0.5rem;">
-                <span>⚡ CONFIDENCE INDEX</span>
-                <span>{primary_confidence}%</span>
-            </div>
-            <div style="height: 4px; background: rgba(0,255,136,0.2); border-radius: 4px; overflow: hidden;">
-                <div class="spectrum-bar" style="width: {primary_confidence}%; height: 100%;"></div>
-            </div>
-        </div>
+        full_card_html = f"""
+        <div class="hologram-card" style="text-align: center;">
+            <div style="font-size: 0.8rem; color: #888; letter-spacing: 2px;">PRIMARY SDG CLASSIFICATION</div>
+            <div style="font-size: 5rem; margin: 1rem 0;">{sdg_icon}</div>
+            <div class="digital-display" style="font-size: 4rem;">SDG {primary_sdg}</div>
+            <div style="font-size: 1.3rem; font-weight: 500; color: #00ff88; margin-top: 0.5rem;">{sdg_name}</div>
+            {confidence_bar_html}
+            {badges_html}
         """
+        
+        if analysis_result.get("multi_label"):
+            full_card_html += '<span class="status-badge" style="margin-top: 0.5rem; display: inline-block;">🔗 MULTI-LABEL DETECTED</span>'
+        
+        full_card_html += '</div>'
+        
+        st.markdown(full_card_html, unsafe_allow_html=True)
         
         badges_html = """
         <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap;">
