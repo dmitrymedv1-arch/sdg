@@ -1758,7 +1758,6 @@ with col_right:
         </div>
         """, unsafe_allow_html=True)
         
-        st.markdown(primary_card_html, unsafe_allow_html=True)
         
         # Secondary SDG Bands
         if analysis_result.get("secondary_sdgs"):
