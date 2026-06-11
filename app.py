@@ -2119,7 +2119,7 @@ with col_left:
     st.markdown('<div class="glass-panel">', unsafe_allow_html=True)
     st.markdown('<div class="status-badge" style="margin-bottom: 1rem;">📡 INPUT BUFFER</div>', unsafe_allow_html=True)
     
-   st.markdown('<div style="font-size: 0.7rem; color: #888; margin-bottom: 0.5rem;">📄 ABSTRACT INPUT</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-size: 0.7rem; color: #888; margin-bottom: 0.5rem;">⚡ SPECTRAL SIGNATURE CAPTURE</div>', unsafe_allow_html=True)
     
     abstract = st.text_area(
         "Abstract Input",
@@ -2128,7 +2128,7 @@ with col_left:
         label_visibility="collapsed"
     )
     
-    st.markdown('<div style="font-size: 0.7rem; color: #888; margin-top: 1rem; margin-bottom: 0.5rem;">🔬 KEYWORDS (OPTIONAL)</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-size: 0.7rem; color: #888; margin-top: 1rem; margin-bottom: 0.5rem;">🔬 ENHANCED KEYWORDS (OPTIONAL)</div>', unsafe_allow_html=True)
     
     keywords_input = st.text_input(
         "Enhanced Keywords",
@@ -2142,11 +2142,11 @@ with col_left:
     
     st.markdown('</div>', unsafe_allow_html=True)
     
-    analyze_btn = st.button("🔍 ANALYZE TEXT", use_container_width=True)
+    analyze_btn = st.button("⚡ INITIATE SPECTRAL ANALYSIS", use_container_width=True)
 
 with col_right:
     st.markdown('<div class="glass-panel" style="min-height: 500px;">', unsafe_allow_html=True)
-    st.markdown('<div class="status-badge" style="margin-bottom: 1rem;">📊 ANALYSIS RESULTS</div>', unsafe_allow_html=True)
+    st.markdown('<div class="status-badge" style="margin-bottom: 1rem;">🌀 ANALYSIS OUTPUT</div>', unsafe_allow_html=True)
     
     if analyze_btn and combined_text.strip():
         with st.spinner("Processing spectral signature..."):
