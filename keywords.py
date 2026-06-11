@@ -1,6 +1,7 @@
 # keywords.py
 # COMPLETE SDG KEYWORDS DATABASE
-# UPDATED: 3200+ TERMS WITH REBALANCED SDG 7 & SDG 9
+# UPDATED: 3600+ TERMS WITH EXPANDED COVERAGE
+# NEW: Scientific communication, data visualization, software tools, editorial processes, AI detection, publication ethics
 
 # ============================================================================
 # SDG 1: No Poverty (55+ terms)
@@ -34,6 +35,22 @@ SDG1_KEYWORDS = {
         "food insecurity": 2,
         "low socioeconomic": 2,
         "economic shock": 2,
+        "multidimensional poverty index": 3,
+        "poverty dynamics": 2,
+        "chronic poverty": 3,
+        "transient poverty": 2,
+        "poverty gap": 2,
+        "poverty severity": 2,
+        "social exclusion poverty": 3,
+        "capability deprivation": 2,
+        "livelihood vulnerability": 2,
+        "asset deprivation": 2,
+        "housing poverty": 2,
+        "energy poverty": 2,
+        "transport poverty": 2,
+        "digital poverty": 2,
+        "time poverty": 2,
+        "multidimensional deprivation": 3,
     },
     "single_words": {
         "poverty": 3,
@@ -52,6 +69,9 @@ SDG1_KEYWORDS = {
         "charity": 2,
         "food bank": 2,
         "income inequality": 2,
+        "indigence": 3,
+        "penury": 3,
+        "beggary": 2,
     },
     "stems": {
         "pover": 2,
@@ -63,7 +83,7 @@ SDG1_KEYWORDS = {
 }
 
 # ============================================================================
-# SDG 2: Zero Hunger (55+ terms)
+# SDG 2: Zero Hunger (60+ terms)
 # ============================================================================
 
 SDG2_KEYWORDS = {
@@ -97,6 +117,17 @@ SDG2_KEYWORDS = {
         "dietary diversity": 2,
         "food assistance": 2,
         "school feeding": 2,
+        "acute malnutrition": 3,
+        "chronic malnutrition": 3,
+        "food utilization": 2,
+        "food stability": 2,
+        "food availability": 2,
+        "dietary quality": 2,
+        "complementary feeding": 2,
+        "therapeutic feeding": 2,
+        "emergency food aid": 2,
+        "food stock": 2,
+        "grain reserve": 2,
     },
     "single_words": {
         "hunger": 3,
@@ -112,6 +143,10 @@ SDG2_KEYWORDS = {
         "agroforestry": 2,
         "hydroponics": 2,
         "aquaponics": 2,
+        "undernourishment": 3,
+        "thiamin": 2,
+        "riboflavin": 2,
+        "niacin": 2,
     },
     "stems": {
         "hungr": 2,
@@ -125,7 +160,7 @@ SDG2_KEYWORDS = {
 }
 
 # ============================================================================
-# SDG 3: Good Health & Well-being (100+ terms)
+# SDG 3: Good Health & Well-being (110+ terms)
 # ============================================================================
 
 SDG3_KEYWORDS = {
@@ -175,6 +210,19 @@ SDG3_KEYWORDS = {
         "apoptosis": 3,
         "necrosis": 3,
         "cell cycle arrest": 3,
+        "antiviral activity": 3,
+        "antibacterial activity": 3,
+        "antifungal activity": 3,
+        "cytotoxic activity": 3,
+        "therapeutic index": 3,
+        "selectivity index": 3,
+        "blood-brain barrier": 3,
+        "bioavailability": 3,
+        "pharmacokinetic parameter": 3,
+        "pharmacodynamic parameter": 3,
+        "admet profile": 3,
+        "drug likeness": 2,
+        "lead compound": 2,
     },
     "single_words": {
         "disease": 3,
@@ -215,6 +263,11 @@ SDG3_KEYWORDS = {
         "pharmacokinetics": 3,
         "pharmacodynamics": 3,
         "bioavailability": 3,
+        "neurodegenerative": 3,
+        "autoimmune": 3,
+        "metabolic syndrome": 2,
+        "obesity": 2,
+        "hypertension": 2,
     },
     "stems": {
         "diseas": 2,
@@ -238,7 +291,7 @@ SDG3_KEYWORDS = {
 }
 
 # ============================================================================
-# SDG 4: Quality Education (50+ terms)
+# SDG 4: Quality Education (UPDATED: 90+ terms including scientific communication)
 # ============================================================================
 
 SDG4_KEYWORDS = {
@@ -278,6 +331,32 @@ SDG4_KEYWORDS = {
         "education financing": 2,
         "teacher professional development": 2,
         "educational assessment": 2,
+        "scientific communication": 3,
+        "research communication": 3,
+        "data literacy": 3,
+        "visualization literacy": 3,
+        "academic writing": 2,
+        "research impact": 2,
+        "clarity of research": 2,
+        "effective figures": 2,
+        "science writing": 2,
+        "technical writing": 2,
+        "grant writing": 2,
+        "academic communication": 3,
+        "scholarly communication": 3,
+        "research training": 2,
+        "methodology training": 2,
+        "data science education": 2,
+        "computational thinking": 2,
+        "information literacy": 3,
+        "media literacy": 2,
+        "critical thinking education": 2,
+        "problem solving education": 2,
+        "collaborative learning": 2,
+        "project based learning": 2,
+        "inquiry based learning": 2,
+        "blended learning": 2,
+        "flipped classroom": 2,
     },
     "single_words": {
         "literacy": 3,
@@ -287,6 +366,9 @@ SDG4_KEYWORDS = {
         "preschool": 2,
         "kindergarten": 2,
         "scholarship": 2,
+        "didactic": 2,
+        "andragogy": 2,
+        "heutagogy": 2,
     },
     "stems": {
         "liter": 2,
@@ -296,11 +378,13 @@ SDG4_KEYWORDS = {
         "teach": 2,
         "train": 2,
         "school": 2,
+        "communic": 2,
+        "literaci": 2,
     }
 }
 
 # ============================================================================
-# SDG 5: Gender Equality (50+ terms)
+# SDG 5: Gender Equality (55+ terms)
 # ============================================================================
 
 SDG5_KEYWORDS = {
@@ -351,6 +435,8 @@ SDG5_KEYWORDS = {
         "LGBTQ": 2,
         "feminism": 2,
         "empowerment": 2,
+        "androcracy": 2,
+        "matriarchy": 2,
     },
     "stems": {
         "gender": 2,
@@ -364,7 +450,7 @@ SDG5_KEYWORDS = {
 }
 
 # ============================================================================
-# SDG 6: Clean Water & Sanitation (65+ terms)
+# SDG 6: Clean Water & Sanitation (70+ terms)
 # ============================================================================
 
 SDG6_KEYWORDS = {
@@ -406,6 +492,12 @@ SDG6_KEYWORDS = {
         "capacitive deionization": 2,
         "forward osmosis": 2,
         "membrane distillation": 2,
+        "groundwater recharge": 2,
+        "aquifer storage": 2,
+        "desalination plant": 3,
+        "wastewater treatment plant": 3,
+        "water distribution network": 2,
+        "water loss reduction": 2,
     },
     "single_words": {
         "sanitation": 3,
@@ -428,6 +520,9 @@ SDG6_KEYWORDS = {
         "filtration": 2,
         "latrine": 2,
         "handwashing": 2,
+        "toilet": 2,
+        "sewerage": 2,
+        "effluent": 2,
     },
     "stems": {
         "water": 2,
@@ -446,10 +541,7 @@ SDG6_KEYWORDS = {
 }
 
 # ============================================================================
-# SDG 7: Affordable & Clean Energy (UPDATED: 135+ terms)
-# Added: proton conductivity, proton transport, solid oxide fuel cell,
-# perovskite energy, electrolyte conductivity, oxygen vacancy energy,
-# intermediate temperature electrochemical, protonic ceramic fuel cell
+# SDG 7: Affordable & Clean Energy (155+ terms)
 # ============================================================================
 
 SDG7_KEYWORDS = {
@@ -492,7 +584,6 @@ SDG7_KEYWORDS = {
         "rural electrification": 3,
         "energy justice": 2,
         "sodium ion": 2,
-        # NEW: Proton and fuel cell specific terms
         "proton conductivity": 3,
         "proton transport": 3,
         "proton conduction": 3,
@@ -537,6 +628,19 @@ SDG7_KEYWORDS = {
         "liquid organic hydrogen carrier": 3,
         "ammonia hydrogen carrier": 2,
         "formic acid hydrogen": 2,
+        "tidal energy": 3,
+        "wave energy": 3,
+        "geothermal energy": 3,
+        "biomass energy": 3,
+        "biogas energy": 3,
+        "bioethanol production": 3,
+        "biodiesel production": 3,
+        "synthetic fuel": 2,
+        "e-fuel": 2,
+        "power to gas": 2,
+        "power to liquid": 2,
+        "carbon neutral fuel": 3,
+        "zero carbon fuel": 3,
     },
     "single_words": {
         "biofuel": 3,
@@ -561,7 +665,6 @@ SDG7_KEYWORDS = {
         "triboelectric": 2,
         "microgrid": 2,
         "off-grid": 3,
-        # NEW: Single words for energy
         "perovskite": 2,
         "proton": 3,
         "protonic": 3,
@@ -589,6 +692,9 @@ SDG7_KEYWORDS = {
         "hopping mechanism": 2,
         "grotthuss mechanism": 2,
         "vehicle mechanism": 2,
+        "wave": 2,
+        "tidal": 2,
+        "hydroelectric": 2,
     },
     "stems": {
         "energy": 2,
@@ -615,7 +721,7 @@ SDG7_KEYWORDS = {
 }
 
 # ============================================================================
-# SDG 8: Decent Work & Economic Growth (50+ terms)
+# SDG 8: Decent Work & Economic Growth (55+ terms)
 # ============================================================================
 
 SDG8_KEYWORDS = {
@@ -656,6 +762,10 @@ SDG8_KEYWORDS = {
         "social enterprise": 2,
         "labor productivity": 2,
         "economic resilience": 2,
+        "living wage": 3,
+        "working poor": 2,
+        "labor standard": 2,
+        "occupational health": 2,
     },
     "single_words": {
         "unemployment": 3,
@@ -667,6 +777,8 @@ SDG8_KEYWORDS = {
         "apprenticeship": 2,
         "internship": 2,
         "cooperative": 2,
+        "livelihood": 2,
+        "wage": 2,
     },
     "stems": {
         "employ": 2,
@@ -680,13 +792,12 @@ SDG8_KEYWORDS = {
 }
 
 # ============================================================================
-# SDG 9: Industry, Innovation & Infrastructure (UPDATED: reduced weight for generic terms)
-# Changed: crystal structure weight 3→1, defect structure 3→1, solid solution 2→1
-# Added: clear differentiation from energy-specific materials
+# SDG 9: Industry, Innovation & Infrastructure (UPDATED: 210+ terms including software tools, scientific communication, AI)
 # ============================================================================
 
 SDG9_KEYWORDS = {
     "exact_phrases": {
+        # Core industry and innovation
         "technology transfer": 3,
         "sustainable industry": 3,
         "materials science": 3,
@@ -734,6 +845,7 @@ SDG9_KEYWORDS = {
         "microwave-assisted synthesis": 3,
         "sonochemical synthesis": 3,
         "mechanochemical synthesis": 3,
+        
         # Materials for non-energy applications
         "structural material": 3,
         "construction material": 3,
@@ -753,6 +865,87 @@ SDG9_KEYWORDS = {
         "corrosion protection": 2,
         "wear resistance": 2,
         "thermal barrier coating": 2,
+        
+        # NEW: Software tools and web applications
+        "web-based application": 3,
+        "software tool": 3,
+        "analytical tool": 3,
+        "data visualization": 3,
+        "heatmap generator": 3,
+        "histogram visualizer": 3,
+        "distribution visualizer": 3,
+        "speed graph generator": 3,
+        "data storytelling": 3,
+        "graphical representation": 3,
+        "visualization toolkit": 3,
+        "analytical precision": 3,
+        "statistical summary": 3,
+        "univariate analysis": 3,
+        "bivariate analysis": 3,
+        "performance metrics": 3,
+        "user-centered design": 2,
+        "accessibility tool": 2,
+        "matrix data analysis": 3,
+        "min max analyzer": 3,
+        "data analysis platform": 3,
+        "scientific computing": 3,
+        "computational tool": 3,
+        "data processing software": 2,
+        "algorithm development": 3,
+        "machine learning tool": 3,
+        "artificial intelligence tool": 3,
+        "deep learning framework": 3,
+        "data mining software": 3,
+        "statistical software": 3,
+        "visual analytics": 3,
+        "interactive visualization": 3,
+        "dashboard tool": 2,
+        "data exploration": 2,
+        "pattern recognition software": 3,
+        
+        # NEW: AI detection and linguistic analysis
+        "ai detection": 3,
+        "ai generated text": 3,
+        "linguistic pattern analysis": 3,
+        "proprietary analytical tool": 3,
+        "manuscript assessment": 3,
+        "reference analyzer": 3,
+        "citation verification": 3,
+        "academic database cross-referencing": 3,
+        "cta i detector": 3,
+        "comprehensive reference list analyzer": 3,
+        "text analysis algorithm": 3,
+        "language model detection": 3,
+        "generative ai detection": 3,
+        "llm detection": 3,
+        "chatbot detection": 3,
+        "synthetic text detection": 3,
+        "authorship verification": 3,
+        "plagiarism detection": 2,
+        "similarity detection": 2,
+        "citation analysis": 3,
+        "bibliometric tool": 2,
+        "reference checking": 2,
+        
+        # NEW: Scientific communication and visualization
+        "scientific visualization": 3,
+        "research visualization": 3,
+        "data visualization tool": 3,
+        "chart generator": 2,
+        "plot generator": 2,
+        "graph generator": 2,
+        "interactive dashboard": 2,
+        "data dashboard": 2,
+        "analytics platform": 2,
+        "business intelligence tool": 2,
+        "report generator": 2,
+        "automated reporting": 2,
+        "data analysis pipeline": 2,
+        "workflow automation": 2,
+        "computational notebook": 2,
+        "reproducible research": 2,
+        "open source tool": 2,
+        "scientific software": 3,
     },
     "single_words": {
         "infrastructure": 3,
@@ -801,6 +994,7 @@ SDG9_KEYWORDS = {
         "optimization": 2,
         "characterization": 2,
         "discovery": 2,
+        
         # Generic terms with reduced weight
         "crystal structure": 1,
         "defect structure": 1,
@@ -808,6 +1002,27 @@ SDG9_KEYWORDS = {
         "atomic arrangement": 1,
         "structural disorder": 1,
         "local structure": 1,
+        
+        # NEW single words for software and tools
+        "heatmap": 3,
+        "histogram": 3,
+        "visualizer": 3,
+        "analyzer": 3,
+        "dashboard": 2,
+        "toolkit": 2,
+        "algorithm": 2,
+        "software": 3,
+        "application": 2,
+        "platform": 2,
+        "framework": 2,
+        "library": 2,
+        "api": 2,
+        "workflow": 2,
+        "pipeline": 2,
+        "detector": 3,
+        "verifier": 2,
+        "validator": 2,
+        "cross-referencer": 2,
     },
     "stems": {
         "material": 2,
@@ -826,11 +1041,17 @@ SDG9_KEYWORDS = {
         "optimiz": 2,
         "character": 2,
         "discoveri": 2,
+        "visual": 2,
+        "analyt": 2,
+        "comput": 2,
+        "algorithm": 2,
+        "softwar": 2,
+        "detect": 2,
     }
 }
 
 # ============================================================================
-# SDG 10: Reduced Inequalities (45+ terms)
+# SDG 10: Reduced Inequalities (50+ terms)
 # ============================================================================
 
 SDG10_KEYWORDS = {
@@ -892,7 +1113,7 @@ SDG10_KEYWORDS = {
 }
 
 # ============================================================================
-# SDG 11: Sustainable Cities & Communities (55+ terms)
+# SDG 11: Sustainable Cities & Communities (60+ terms)
 # ============================================================================
 
 SDG11_KEYWORDS = {
@@ -934,6 +1155,12 @@ SDG11_KEYWORDS = {
         "community garden": 2,
         "public space": 2,
         "urban governance": 2,
+        "noise pollution": 2,
+        "light pollution": 2,
+        "walkable city": 2,
+        "bike sharing": 2,
+        "car sharing": 2,
+        "zero emission vehicle": 2,
     },
     "single_words": {
         "urban": 3,
@@ -943,6 +1170,9 @@ SDG11_KEYWORDS = {
         "metro": 2,
         "gentrification": 2,
         "placemaking": 2,
+        "megacity": 2,
+        "suburb": 2,
+        "conurbation": 2,
     },
     "stems": {
         "city": 2,
@@ -956,7 +1186,7 @@ SDG11_KEYWORDS = {
 }
 
 # ============================================================================
-# SDG 12: Responsible Consumption & Production (65+ terms)
+# SDG 12: Responsible Consumption & Production (70+ terms)
 # ============================================================================
 
 SDG12_KEYWORDS = {
@@ -1000,6 +1230,11 @@ SDG12_KEYWORDS = {
         "ecological footprint": 2,
         "sustainable lifestyle": 2,
         "conscious consumption": 2,
+        "e-waste recycling": 3,
+        "battery recycling": 3,
+        "composting facility": 2,
+        "material recovery": 2,
+        "resource recovery": 2,
     },
     "single_words": {
         "waste": 3,
@@ -1015,6 +1250,9 @@ SDG12_KEYWORDS = {
         "compostable": 2,
         "ecodesign": 2,
         "minimalism": 2,
+        "remanufacturing": 2,
+        "reuse": 2,
+        "repair": 2,
     },
     "stems": {
         "recycl": 2,
@@ -1031,7 +1269,7 @@ SDG12_KEYWORDS = {
 }
 
 # ============================================================================
-# SDG 13: Climate Action (55+ terms)
+# SDG 13: Climate Action (60+ terms)
 # ============================================================================
 
 SDG13_KEYWORDS = {
@@ -1087,6 +1325,9 @@ SDG13_KEYWORDS = {
         "wildfire": 2,
         "hurricane": 2,
         "cyclone": 2,
+        "typhoon": 2,
+        "monsoon": 2,
+        "permafrost": 2,
     },
     "stems": {
         "climat": 2,
@@ -1102,7 +1343,7 @@ SDG13_KEYWORDS = {
 }
 
 # ============================================================================
-# SDG 14: Life Below Water (55+ terms)
+# SDG 14: Life Below Water (60+ terms)
 # ============================================================================
 
 SDG14_KEYWORDS = {
@@ -1138,6 +1379,10 @@ SDG14_KEYWORDS = {
         "marine chemistry": 2,
         "ocean biogeochemistry": 2,
         "tidal flat": 2,
+        "sea grass": 2,
+        "mangrove forest": 2,
+        "estuarine ecosystem": 2,
+        "coastal wetland": 2,
     },
     "single_words": {
         "marine": 3,
@@ -1155,6 +1400,8 @@ SDG14_KEYWORDS = {
         "dolphin": 2,
         "estuary": 2,
         "lagoon": 2,
+        "cetacean": 2,
+        "pinniped": 2,
     },
     "stems": {
         "ocean": 2,
@@ -1170,7 +1417,7 @@ SDG14_KEYWORDS = {
 }
 
 # ============================================================================
-# SDG 15: Life On Land (60+ terms)
+# SDG 15: Life On Land (65+ terms)
 # ============================================================================
 
 SDG15_KEYWORDS = {
@@ -1225,6 +1472,9 @@ SDG15_KEYWORDS = {
         "agroforestry": 2,
         "brownfield": 2,
         "pollinator": 2,
+        "fauna": 2,
+        "flora": 2,
+        "biota": 2,
     },
     "stems": {
         "deforest": 2,
@@ -1240,11 +1490,12 @@ SDG15_KEYWORDS = {
 }
 
 # ============================================================================
-# SDG 16: Peace, Justice & Strong Institutions (55+ terms)
+# SDG 16: Peace, Justice & Strong Institutions (UPDATED: 95+ terms including editorial processes, publication ethics)
 # ============================================================================
 
 SDG16_KEYWORDS = {
     "exact_phrases": {
+        # Core peace and justice
         "rule of law": 3,
         "access to justice": 3,
         "human rights": 3,
@@ -1270,6 +1521,64 @@ SDG16_KEYWORDS = {
         "police reform": 2,
         "prison reform": 2,
         "restorative justice": 2,
+        
+        # NEW: Editorial processes and publication ethics
+        "editorial process": 3,
+        "editorial decision": 3,
+        "manuscript review": 3,
+        "peer review": 3,
+        "publication ethics": 3,
+        "ethical publishing": 3,
+        "research integrity": 3,
+        "transparent publishing": 3,
+        "editorial board": 3,
+        "journal commitment": 3,
+        "evidence-informed decision": 3,
+        "academic publishing practice": 3,
+        "scholarly communication ethics": 3,
+        "open science practice": 3,
+        "responsible research workflow": 3,
+        "manuscript assessment": 3,
+        "editorial policy": 3,
+        "conflict of interest": 3,
+        "authorship dispute": 3,
+        "retraction policy": 3,
+        "correction policy": 3,
+        "peer review integrity": 3,
+        "double blind review": 2,
+        "single blind review": 2,
+        "open peer review": 2,
+        "post publication review": 2,
+        "predatory publishing": 3,
+        "paper mill detection": 3,
+        "research misconduct": 3,
+        "data fabrication": 3,
+        "image manipulation": 3,
+        "plagiarism policy": 2,
+        "citation manipulation": 3,
+        "self plagiarism": 2,
+        "duplicate publication": 3,
+        "salami slicing": 2,
+        "ghost authorship": 3,
+        "guest authorship": 3,
+        "corresponding author responsibility": 2,
+        "editorial independence": 3,
+        "journal transparency": 3,
+        "open access policy": 2,
+        "publication malpractice": 3,
+        
+        # NEW: Research governance
+        "research governance": 3,
+        "institutional review board": 3,
+        "research ethics committee": 3,
+        "ethical approval": 2,
+        "informed consent": 2,
+        "data protection compliance": 2,
+        "responsible conduct of research": 3,
+        "research reproducibility": 2,
+        "open data policy": 2,
+        "code of conduct": 2,
+        "whistleblower protection": 2,
     },
     "single_words": {
         "peace": 3,
@@ -1292,6 +1601,18 @@ SDG16_KEYWORDS = {
         "mediation": 2,
         "diplomacy": 2,
         "statelessness": 2,
+        
+        # NEW single words for editorial
+        "editorial": 3,
+        "manuscript": 3,
+        "peer-review": 3,
+        "ethics": 3,
+        "integrity": 3,
+        "retraction": 2,
+        "correction": 2,
+        "misconduct": 3,
+        "fabrication": 3,
+        "falsification": 3,
     },
     "stems": {
         "peace": 2,
@@ -1302,11 +1623,15 @@ SDG16_KEYWORDS = {
         "rights": 2,
         "traffick": 2,
         "legal": 2,
+        "editor": 2,
+        "ethic": 2,
+        "integr": 2,
+        "review": 2,
     }
 }
 
 # ============================================================================
-# SDG 17: Partnerships for the Goals (40+ terms, no 'develop' stem)
+# SDG 17: Partnerships for the Goals (45+ terms)
 # ============================================================================
 
 SDG17_KEYWORDS = {
@@ -1394,26 +1719,63 @@ SDG_KEYWORDS = {
 
 # SDG Names for reference
 SDG_NAMES = {
-    1: "No Poverty", 2: "Zero Hunger", 3: "Good Health & Well-being",
-    4: "Quality Education", 5: "Gender Equality", 6: "Clean Water & Sanitation",
-    7: "Affordable & Clean Energy", 8: "Decent Work & Economic Growth",
-    9: "Industry, Innovation & Infrastructure", 10: "Reduced Inequalities",
-    11: "Sustainable Cities & Communities", 12: "Responsible Consumption & Production",
-    13: "Climate Action", 14: "Life Below Water", 15: "Life On Land",
-    16: "Peace, Justice & Strong Institutions", 17: "Partnerships for the Goals"
+    1: "No Poverty",
+    2: "Zero Hunger",
+    3: "Good Health & Well-being",
+    4: "Quality Education",
+    5: "Gender Equality",
+    6: "Clean Water & Sanitation",
+    7: "Affordable & Clean Energy",
+    8: "Decent Work & Economic Growth",
+    9: "Industry, Innovation & Infrastructure",
+    10: "Reduced Inequalities",
+    11: "Sustainable Cities & Communities",
+    12: "Responsible Consumption & Production",
+    13: "Climate Action",
+    14: "Life Below Water",
+    15: "Life On Land",
+    16: "Peace, Justice & Strong Institutions",
+    17: "Partnerships for the Goals"
 }
 
 # SDG Colors for visualization
 SDG_COLORS = {
-    1: "#E5243B", 2: "#DDA63A", 3: "#4C9F38", 4: "#C5192D", 5: "#FF3A21",
-    6: "#26BDE2", 7: "#FCC30B", 8: "#A21942", 9: "#FD6925", 10: "#DD1367",
-    11: "#FD9D24", 12: "#BF8B2E", 13: "#3F7E44", 14: "#0A97D9", 15: "#56C02B",
-    16: "#00689D", 17: "#19486A"
+    1: "#E5243B",
+    2: "#DDA63A",
+    3: "#4C9F38",
+    4: "#C5192D",
+    5: "#FF3A21",
+    6: "#26BDE2",
+    7: "#FCC30B",
+    8: "#A21942",
+    9: "#FD6925",
+    10: "#DD1367",
+    11: "#FD9D24",
+    12: "#BF8B2E",
+    13: "#3F7E44",
+    14: "#0A97D9",
+    15: "#56C02B",
+    16: "#00689D",
+    17: "#19486A"
 }
 
 # SDG Icons emoji fallback
 SDG_ICONS = {
-    1: "🚫", 2: "🍞", 3: "❤️", 4: "📚", 5: "⚧", 6: "💧", 7: "⚡", 8: "💼",
-    9: "🏭", 10: "⚖️", 11: "🏙️", 12: "♻️", 13: "🌍", 14: "🌊", 15: "🌳",
-    16: "🕊️", 17: "🤝"
+    1: "🚫",
+    2: "🍞",
+    3: "❤️",
+    4: "📚",
+    5: "⚧",
+    6: "💧",
+    7: "⚡",
+    8: "💼",
+    9: "🏭",
+    10: "⚖️",
+    11: "🏙️",
+    12: "♻️",
+    13: "🌍",
+    14: "🌊",
+    15: "🌳",
+    16: "🕊️",
+    17: "🤝"
 }
