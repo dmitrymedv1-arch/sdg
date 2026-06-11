@@ -976,7 +976,7 @@ with col_left:
     st.markdown('<div class="glass-panel">', unsafe_allow_html=True)
     st.markdown('<div class="status-badge" style="margin-bottom: 1rem;">📡 INPUT BUFFER</div>', unsafe_allow_html=True)
     
-    st.markdown('<div style="font-size: 0.7rem; color: #888; margin-bottom: 0.5rem;">Paste your abstract text here</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-size: 0.7rem; color: #ffffff; margin-bottom: 0.5rem;">Paste your abstract text here</div>', unsafe_allow_html=True)
     
     abstract = st.text_area(
         "Abstract Input",
@@ -985,7 +985,7 @@ with col_left:
         label_visibility="collapsed"
     )
     
-    st.markdown('<div style="font-size: 0.7rem; color: #888; margin-top: 1rem; margin-bottom: 0.5rem;">🔬 ENHANCED KEYWORDS (OPTIONAL)</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-size: 0.7rem; color: #ffffff; margin-top: 1rem; margin-bottom: 0.5rem;">🔬 ENHANCED KEYWORDS (OPTIONAL)</div>', unsafe_allow_html=True)
     
     keywords_input = st.text_input(
         "Enhanced Keywords",
@@ -1056,7 +1056,7 @@ with col_right:
         
         st.markdown(f"""
         <div class="hologram-card" style="text-align: center;">
-            <div style="font-size: 0.8rem; color: #888; letter-spacing: 2px;">PRIMARY SDG CLASSIFICATION</div>
+            <div style="font-size: 0.8rem; color: #ffffff; letter-spacing: 2px;">PRIMARY SDG CLASSIFICATION</div>
             <div style="margin: 1rem 0;">{get_sdg_icon_html(primary_sdg)}</div>
             <div class="digital-display" style="font-size: 4rem;">SDG {primary_sdg}</div>
             <div style="font-size: 1.3rem; font-weight: 500; color: #00ff88; margin-top: 0.5rem;">{SDG_NAMES.get(primary_sdg, 'Unknown')}</div>
@@ -1084,7 +1084,7 @@ with col_right:
         if analysis_result.get("secondary_sdgs"):
             st.markdown("""
             <div style="margin-top: 1.5rem;">
-                <div style="font-size: 0.7rem; color: #888; letter-spacing: 1px; margin-bottom: 1rem;">📊 SECONDARY SPECTRAL BANDS</div>
+                <div style="font-size: 0.7rem; color: #ffffff; letter-spacing: 1px; margin-bottom: 1rem;">📊 SECONDARY SPECTRAL BANDS</div>
             """, unsafe_allow_html=True)
             
             for sdg, score in analysis_result["secondary_sdgs"][:4]:
@@ -1111,7 +1111,7 @@ with col_right:
         if matched_terms:
             st.markdown("""
             <div style="margin-top: 1.5rem;">
-                <div style="font-size: 0.7rem; color: #888; letter-spacing: 1px; margin-bottom: 1rem;">🔍 DETECTED SPECTRAL SIGNATURES</div>
+                <div style="font-size: 0.7rem; color: #ffffff; letter-spacing: 1px; margin-bottom: 1rem;">🔍 DETECTED SPECTRAL SIGNATURES</div>
                 <div style="display: flex; flex-wrap: wrap; gap: 6px;">
             """, unsafe_allow_html=True)
             
@@ -1156,7 +1156,7 @@ with col_right:
         
         # Full spectrum view
         with st.expander("📊 FULL SPECTRAL ANALYSIS"):
-            st.markdown('<div style="font-size: 0.7rem; color: #888; margin-bottom: 1rem;">COMPLETE SDG DISTRIBUTION</div>', unsafe_allow_html=True)
+            st.markdown('<div style="font-size: 0.7rem; color: #ffffff; margin-bottom: 1rem;">COMPLETE SDG DISTRIBUTION</div>', unsafe_allow_html=True)
             
             # Sort all SDGs by score
             all_sdgs = sorted(scores.items(), key=lambda x: x[1], reverse=True)
@@ -1251,7 +1251,7 @@ with st.sidebar:
     st.markdown('<div class="glass-panel" style="margin-top: 1rem;">', unsafe_allow_html=True)
     st.markdown("### About")
     st.markdown("""
-    <div style="font-size: 0.7rem; color: #888;">
+    <div style="font-size: 0.7rem; color: #ffffff;">
     <p><strong>SDG Spectral Analyzer v6.1</strong></p>
     <p>Hybrid classification engine using:</p>
     <ul>
