@@ -2119,7 +2119,7 @@ with col_left:
     st.markdown('<div class="glass-panel">', unsafe_allow_html=True)
     st.markdown('<div class="status-badge" style="margin-bottom: 1rem;">📡 INPUT BUFFER</div>', unsafe_allow_html=True)
     
-    st.markdown('<div style="font-size: 0.7rem; color: #888; margin-bottom: 0.5rem;">⚡ SPECTRAL SIGNATURE CAPTURE</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-size: 0.7rem; color: #888; margin-bottom: 0.5rem;">Paste your abstract text here</div>', unsafe_allow_html=True)
     
     abstract = st.text_area(
         "Abstract Input",
