@@ -5,6 +5,7 @@ from pathlib import Path
 import time
 import base64
 from collections import defaultdict
+from PIL import Image
 
 # ============================================================================
 # NLTK SETUP (CACHED)
@@ -1263,6 +1264,32 @@ SDG_ICONS = {
     16: "🕊️", 17: "🤝"
 }
 
+# Загрузка иконок из папки icons
+import os
+from PIL import Image
+import base64
+from io import BytesIO
+
+def load_sdg_icon(sdg_num):
+    """Load SDG icon from icons folder and convert to base64 for HTML display"""
+    icon_path = Path(f"icons/{sdg_num:02d}.jpg")
+    if icon_path.exists():
+        with open(icon_path, "rb") as f:
+            img_data = f.read()
+        img_base64 = base64.b64encode(img_data).decode()
+        return f'<img src="data:image/jpeg;base64,{img_base64}" style="width: 48px; height: 48px; object-fit: contain;">'
+    else:
+        # Fallback emoji if icon not found
+        fallback = {1: "🚫", 2: "🍞", 3: "❤️", 4: "📚", 5: "⚧", 6: "💧", 7: "⚡", 8: "💼",
+                    9: "🏭", 10: "⚖️", 11: "🏙️", 12: "♻️", 13: "🌍", 14: "🌊", 15: "🌳",
+                    16: "🕊️", 17: "🤝"}
+        return fallback.get(sdg_num, "🎯")
+
+# Cache loaded icons
+@st.cache_data
+def get_sdg_icon_html(sdg_num):
+    return load_sdg_icon(sdg_num)
+
 # SDG Colors for visualization
 SDG_COLORS = {
     1: "#E5243B", 2: "#DDA63A", 3: "#4C9F38", 4: "#C5192D", 5: "#FF3A21",
@@ -1736,7 +1763,7 @@ with col_right:
         st.markdown(f"""
         <div class="hologram-card" style="text-align: center;">
             <div style="font-size: 0.8rem; color: #888; letter-spacing: 2px;">PRIMARY SDG CLASSIFICATION</div>
-            <div style="font-size: 5rem; margin: 1rem 0;">{SDG_ICONS.get(primary_sdg, '🎯')}</div>
+            <div style="margin: 1rem 0;">{get_sdg_icon_html(primary_sdg)}</div>
             <div class="digital-display" style="font-size: 4rem;">SDG {primary_sdg}</div>
             <div style="font-size: 1.3rem; font-weight: 500; color: #00ff88; margin-top: 0.5rem;">{SDG_NAMES.get(primary_sdg, 'Unknown')}</div>
             <div style="margin: 1.5rem 0;">
@@ -1758,7 +1785,6 @@ with col_right:
         </div>
         """, unsafe_allow_html=True)
         
-        
         # Secondary SDG Bands
         if analysis_result.get("secondary_sdgs"):
             st.markdown("""
@@ -1772,7 +1798,10 @@ with col_right:
                 st.markdown(f"""
                 <div class="sdg-card" style="margin-bottom: 0.75rem; padding: 0.75rem; background: rgba(15, 15, 25, 0.4); border-radius: 12px; border: 1px solid rgba(0,255,136,0.2);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                        <span style="font-size: 0.8rem; color: #00ff88;">{SDG_ICONS.get(sdg, '🎯')} SDG {sdg} • {SDG_NAMES.get(sdg, 'Unknown')[:40]}</span>
+                        <span style="font-size: 0.8rem; color: #00ff88; display: flex; align-items: center; gap: 8px;">
+                            <span style="display: inline-block;">{get_sdg_icon_html(sdg)}</span>
+                            <span>SDG {sdg} • {SDG_NAMES.get(sdg, 'Unknown')[:40]}</span>
+                        </span>
                         <span style="font-size: 0.7rem; color: #00ff88;">{percent}%</span>
                     </div>
                     <div style="height: 2px; background: rgba(0,255,136,0.2); border-radius: 2px;">
@@ -1836,7 +1865,7 @@ with col_right:
                     percent = min(100, conf)
                     st.markdown(f"""
                     <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; padding: 0.5rem; background: rgba(15,15,25,0.3); border-radius: 8px;">
-                        <div style="font-size: 1.5rem; min-width: 40px;">{SDG_ICONS.get(sdg, '🎯')}</div>
+                        <div style="min-width: 60px;">{get_sdg_icon_html(sdg)}</div>
                         <div style="flex-grow: 1;">
                             <div style="display: flex; justify-content: space-between; font-size: 0.7rem;">
                                 <span>SDG {sdg}: {SDG_NAMES.get(sdg, '')}</span>
