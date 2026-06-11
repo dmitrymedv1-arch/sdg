@@ -803,6 +803,7 @@ st.markdown("""
         border-radius: 20px;
         padding: 1.5rem;
         transition: all 0.3s ease;
+        color: #ffffff;
     }
     
     .glass-panel:hover {
