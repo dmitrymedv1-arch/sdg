@@ -1740,12 +1740,12 @@ with col_right:
             <div style="font-size: 1.3rem; font-weight: 500; color: #00ff88; margin-top: 0.5rem;">{SDG_NAMES.get(primary_sdg, 'Unknown')}</div>
             
             <div style="margin: 1.5rem 0;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.7rem; margin-bottom: 0.5rem;">
-                    <span>⚡ CONFIDENCE INDEX</span>
-                    <span>{primary_confidence}%</span>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <span style="font-size: 0.7rem;">⚡ CONFIDENCE INDEX</span>
+                    <span style="font-size: 0.7rem; color: #00ff88;">{primary_confidence}%</span>
                 </div>
                 <div style="height: 4px; background: rgba(0,255,136,0.2); border-radius: 4px; overflow: hidden;">
-                    <div class="spectrum-bar" style="width: {primary_confidence}%; height: 100%;"></div>
+                    <div style="width: {primary_confidence}%; height: 100%; background: linear-gradient(90deg, #00ff88, #00d4ff);"></div>
                 </div>
             </div>
             
