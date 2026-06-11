@@ -944,7 +944,7 @@ st.markdown('<div class="grid-overlay"></div>', unsafe_allow_html=True)
 
 st.markdown("""
 <div style="text-align: center; margin-bottom: 2rem;">
-    <div class="status-badge" style="margin-bottom: 1rem;">⚛️ ACTIVE · HYBRID CLASSIFIER v6.1</div>
+    <div class="status-badge" style="margin-bottom: 1rem;">⚛️ ACTIVE · HYBRID CLASSIFIER</div>
     <div class="neon-text">SDG SPECTRAL ANALYZER</div>
     <div style="color: #666; font-size: 0.8rem; letter-spacing: 2px; margin-top: 0.5rem;">
         CHEMICAL & MATERIALS SCIENCE EDITION • 3200+ TERMS • WORD BOUNDARY MATCHING • CONTEXT AWARE • ENERGY MATERIALS OPTIMIZED
