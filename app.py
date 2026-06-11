@@ -1726,48 +1726,14 @@ with col_right:
         
         # Primary SDG Display
         primary_confidence = confidence.get(primary_sdg, 0)
-
-        # Build HTML components in correct order
-        sdg_icon = SDG_ICONS.get(primary_sdg, '🎯')
-        sdg_name = SDG_NAMES.get(primary_sdg, 'Unknown')
         
-        # Confidence bar HTML
-        confidence_bar_html = f"""
-        <div style="margin: 1.5rem 0;">
-            <div style="display: flex; justify-content: space-between; font-size: 0.7rem; margin-bottom: 0.5rem;">
-                <span>⚡ CONFIDENCE INDEX</span>
-                <span>{primary_confidence}%</span>
-            </div>
-            <div style="height: 4px; background: rgba(0,255,136,0.2); border-radius: 4px; overflow: hidden;">
-                <div class="spectrum-bar" style="width: {primary_confidence}%; height: 100%;"></div>
-            </div>
-        </div>
-        """
-        
-        # Badges HTML
-        badges_html = """
-        <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap;">
-            <span class="status-badge">🎯 SPECTRAL MATCH</span>
-            <span class="status-badge">🔬 HYBRID MODE</span>
-            <span class="status-badge">📊 TF WEIGHTED</span>
-            <span class="status-badge">📚 2000+ TERMS</span>
-        </div>
-        """
-        
-        # Build complete card using list of HTML parts
-        card_parts = []
-        
-        # Start card
-        card_parts.append(f"""
+        st.markdown(f"""
         <div class="hologram-card" style="text-align: center;">
             <div style="font-size: 0.8rem; color: #888; letter-spacing: 2px;">PRIMARY SDG CLASSIFICATION</div>
-            <div style="font-size: 5rem; margin: 1rem 0;">{sdg_icon}</div>
+            <div style="font-size: 5rem; margin: 1rem 0;">{SDG_ICONS.get(primary_sdg, '🎯')}</div>
             <div class="digital-display" style="font-size: 4rem;">SDG {primary_sdg}</div>
-            <div style="font-size: 1.3rem; font-weight: 500; color: #00ff88; margin-top: 0.5rem;">{sdg_name}</div>
-        """)
-        
-        # Add confidence bar
-        card_parts.append(f"""
+            <div style="font-size: 1.3rem; font-weight: 500; color: #00ff88; margin-top: 0.5rem;">{SDG_NAMES.get(primary_sdg, 'Unknown')}</div>
+            
             <div style="margin: 1.5rem 0;">
                 <div style="display: flex; justify-content: space-between; font-size: 0.7rem; margin-bottom: 0.5rem;">
                     <span>⚡ CONFIDENCE INDEX</span>
@@ -1777,46 +1743,16 @@ with col_right:
                     <div class="spectrum-bar" style="width: {primary_confidence}%; height: 100%;"></div>
                 </div>
             </div>
-        """)
-        
-        # Add badges
-        card_parts.append("""
+            
             <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap;">
-                <span class="status-badge">🎯 SPECTRAL MATCH</span>
-                <span class="status-badge">🔬 HYBRID MODE</span>
-                <span class="status-badge">📊 TF WEIGHTED</span>
-                <span class="status-badge">📚 2000+ TERMS</span>
+                <div class="status-badge">🎯 SPECTRAL MATCH</div>
+                <div class="status-badge">🔬 HYBRID MODE</div>
+                <div class="status-badge">📊 TF WEIGHTED</div>
+                <div class="status-badge">📚 2000+ TERMS</div>
             </div>
-        """)
-        
-        # Add multi-label badge if needed
-        if analysis_result.get("multi_label"):
-            card_parts.append("""
-            <div style="text-align: center; margin-top: 0.5rem;">
-                <span class="status-badge">🔗 MULTI-LABEL DETECTED</span>
-            </div>
-            """)
-        
-        # Close card
-        card_parts.append("</div>")
-        
-        # Join all parts and render
-        full_card_html = "\n".join(card_parts)
-        st.markdown(full_card_html, unsafe_allow_html=True)
-        
-        full_card_html = f"""
-        <div class="hologram-card" style="text-align: center;">
-            <div style="font-size: 0.8rem; color: #888; letter-spacing: 2px;">PRIMARY SDG CLASSIFICATION</div>
-            <div style="font-size: 5rem; margin: 1rem 0;">{sdg_icon}</div>
-            <div class="digital-display" style="font-size: 4rem;">SDG {primary_sdg}</div>
-            <div style="font-size: 1.3rem; font-weight: 500; color: #00ff88; margin-top: 0.5rem;">{sdg_name}</div>
-            {confidence_bar_html}
-            {badges_html}
-            {multi_label_html}
+            {f'<div class="status-badge" style="margin-top: 0.5rem;">🔗 MULTI-LABEL DETECTED</div>' if analysis_result.get("multi_label") else ''}
         </div>
-        """
-        
-        st.markdown(full_card_html, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
         
         # Secondary SDG Bands
         if analysis_result.get("secondary_sdgs"):
