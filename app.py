@@ -7,9 +7,6 @@ import base64
 from collections import defaultdict
 from PIL import Image
 
-# Import SDG keywords database from separate file
-from keywords import SDG_KEYWORDS, SDG_NAMES, SDG_COLORS, SDG_ICONS
-
 # ============================================================================
 # NLTK SETUP (CACHED)
 # ============================================================================
@@ -235,7 +232,7 @@ def matches_negative_pattern(text: str, sdg: int) -> bool:
 
 
 # ============================================================================
-# CONTEXTUAL RULES (UPDATED: 12 rules total)
+# CONTEXTUAL RULES
 # ============================================================================
 
 def has_methodological_context(text: str, match_pos: int, window_size: int = 50) -> bool:
@@ -264,7 +261,6 @@ def apply_context_rules(sdg: int, term: str, text: str, domain_scores: dict,
     """
     Apply context-based weighting modifiers.
     Returns weight multiplier (0-2).
-    UPDATED: Added rules for perovskite energy materials and proton conductivity.
     """
     text_lower = text.lower()
     multiplier = 1.0
@@ -293,93 +289,16 @@ def apply_context_rules(sdg: int, term: str, text: str, domain_scores: dict,
         if sdg == 3:
             multiplier *= 1.4
     
-    # Rule R05: Materials science boosts SDG 9, 7, 6 (MODIFIED: reduced SDG 9 boost)
+    # Rule R05: Materials science boosts SDG 9, 7, 6
     if domain_scores.get('materials', 0) > 0.3:
-        if sdg == 7:
-            multiplier *= 1.4  # Increased from 1.3
-        elif sdg == 6:
+        if sdg in [9, 7, 6]:
             multiplier *= 1.3
-        elif sdg == 9:
-            multiplier *= 1.1  # Reduced from 1.3
-    
-    # ========== NEW RULES FOR ENERGY MATERIALS DISAMBIGUATION ==========
-    
-    # Rule R06: Perovskite with proton/electrochemistry → SDG 7, NOT SDG 9
-    if 'perovskite' in text_lower:
-        if 'proton conductivity' in text_lower or 'proton transport' in text_lower or 'proton conduction' in text_lower:
-            if sdg == 7:
-                multiplier *= 2.0  # Strong boost for SDG 7
-            elif sdg == 9:
-                multiplier *= 0.2  # Strong reduction for SDG 9 (materials-only classification)
-        elif 'fuel cell' in text_lower or 'solid oxide' in text_lower or 'electrolysis' in text_lower:
-            if sdg == 7:
-                multiplier *= 1.8
-            elif sdg == 9:
-                multiplier *= 0.3
-        elif 'solar cell' in text_lower or 'photovoltaic' in text_lower:
-            # Perovskite solar cells are SDG 7
-            if sdg == 7:
-                multiplier *= 1.6
-            elif sdg == 9:
-                multiplier *= 0.4
-    
-    # Rule R07: Proton/electrochemistry without solar → SDG 7 priority
-    if ('proton' in text_lower or 'electrochem' in text_lower) and 'solar' not in text_lower:
-        if sdg == 7:
-            multiplier *= 1.5
-        elif sdg == 9 and 'synthesis' not in text_lower:
-            multiplier *= 0.6
-    
-    # Rule R08: Fuel cell specific terms → SDG 7
-    fuel_cell_indicators = ['fuel cell', 'solid oxide fuel cell', 'pem fuel cell', 'proton exchange membrane']
-    if any(indicator in text_lower for indicator in fuel_cell_indicators):
-        if sdg == 7:
-            multiplier *= 1.8
-        elif sdg == 9:
-            multiplier *= 0.3
-    
-    # Rule R09: Hydrogen energy terms → SDG 7 (unless purely synthetic)
-    hydrogen_energy_terms = ['hydrogen evolution', 'hydrogen production', 'hydrogen storage', 'water splitting']
-    if any(term in text_lower for term in hydrogen_energy_terms):
-        if sdg == 7:
-            multiplier *= 1.6
-        elif sdg == 9 and 'synthesis' not in text_lower:
-            multiplier *= 0.5
-    
-    # Rule R10: Oxygen vacancy for energy vs materials
-    if 'oxygen vacancy' in text_lower:
-        if 'conductivity' in text_lower or 'transport' in text_lower:
-            # Energy-related oxygen vacancy
-            if sdg == 7:
-                multiplier *= 1.4
-            elif sdg == 9:
-                multiplier *= 0.6
-        else:
-            # Pure materials science oxygen vacancy
-            if sdg == 9:
-                multiplier *= 1.2
-    
-    # Rule R11: Electrochemical characterization → SDG 7
-    electrochem_char = ['impedance spectroscopy', 'current density', 'power density', 'overpotential', 'tafel slope']
-    if any(term in text_lower for term in electrochem_char):
-        if sdg == 7:
-            multiplier *= 1.3
-        elif sdg == 9:
-            multiplier *= 0.7
-    
-    # Rule R12: Ceramic/polymer electrolyte classification
-    if ('electrolyte' in text_lower or 'ionic conductivity' in text_lower):
-        if 'battery' in text_lower or 'fuel cell' in text_lower:
-            if sdg == 7:
-                multiplier *= 1.4
-        elif sdg == 9:
-            multiplier *= 0.8
     
     return multiplier
 
 
 # ============================================================================
-# BOOST RULES (UPDATED: 15 rules total)
+# BOOST RULES
 # ============================================================================
 
 BOOST_RULES = [
@@ -387,15 +306,14 @@ BOOST_RULES = [
 ]
 
 def apply_boost_rules(scores: dict, domain_scores: dict, text: str) -> dict:
-    """Apply post-processing boost rules to scores.
-    UPDATED: Added energy-specific boosts and SDG 9 reductions."""
+    """Apply post-processing boost rules to scores."""
     boosted_scores = dict(scores)
     text_lower = text.lower()
     
-    # Boost SDG 9 for chemistry with synthesis terms (REDUCED boost)
+    # Boost SDG 9 for chemistry with synthesis terms
     if domain_scores.get('chemistry', 0) > 0.4:
         if 'synthesis' in text_lower:
-            boosted_scores[9] = boosted_scores.get(9, 0) * 1.5  # Was 2.0
+            boosted_scores[9] = boosted_scores.get(9, 0) * 2.0
     
     # Boost SDG 3 for bioactivity terms
     if domain_scores.get('biology', 0) > 0.2:
@@ -405,61 +323,20 @@ def apply_boost_rules(scores: dict, domain_scores: dict, text: str) -> dict:
     if 'water treatment' in text_lower or 'adsorption' in text_lower:
         boosted_scores[6] = boosted_scores.get(6, 0) * 1.5
     
-    # Boost SDG 7 for photocatalysis/electrocatalysis (INCREASED)
+    # Boost SDG 7 for photocatalysis/electrocatalysis
     if 'photocatalysis' in text_lower:
         boosted_scores[6] = boosted_scores.get(6, 0) * 1.2
-        boosted_scores[7] = boosted_scores.get(7, 0) * 1.5  # Was 1.3
+        boosted_scores[7] = boosted_scores.get(7, 0) * 1.3
     if 'electrocatalysis' in text_lower:
-        boosted_scores[7] = boosted_scores.get(7, 0) * 1.6  # Was 1.4
+        boosted_scores[7] = boosted_scores.get(7, 0) * 1.4
     
     # Boost SDG 12 for biodegradable/green chemistry
     if 'biodegradable' in text_lower or 'green chemistry' in text_lower:
         boosted_scores[12] = boosted_scores.get(12, 0) * 1.4
     
-    # Boost SDG 9 for MOF/perovskite/graphene (REDUCED for perovskite)
-    if 'mof' in text_lower or 'graphene' in text_lower:
+    # Boost SDG 9 for MOF/perovskite/graphene
+    if 'mof' in text_lower or 'perovskite' in text_lower or 'graphene' in text_lower:
         boosted_scores[9] = boosted_scores.get(9, 0) * 1.3
-    if 'perovskite' in text_lower:
-        # Only boost SDG 9 if no energy context
-        if not any(x in text_lower for x in ['proton', 'fuel cell', 'solar cell', 'electrolysis']):
-            boosted_scores[9] = boosted_scores.get(9, 0) * 1.2
-    
-    # ========== NEW BOOST RULES FOR ENERGY ==========
-    
-    # Boost SDG 7 for proton conductivity (STRONG)
-    if 'proton conductivity' in text_lower or 'proton transport' in text_lower or 'proton conduction' in text_lower:
-        boosted_scores[7] = boosted_scores.get(7, 0) * 2.5
-        # Reduce SDG 9 if it was boosted by perovskite
-        if 'perovskite' in text_lower:
-            boosted_scores[9] = boosted_scores.get(9, 0) * 0.4
-    
-    # Boost SDG 7 for solid oxide fuel cell
-    if 'solid oxide fuel cell' in text_lower or 'solid oxide electrolysis' in text_lower:
-        boosted_scores[7] = boosted_scores.get(7, 0) * 2.2
-        boosted_scores[9] = boosted_scores.get(9, 0) * 0.5
-    
-    # Boost SDG 7 for hydrogen energy
-    if 'hydrogen evolution' in text_lower or 'hydrogen production' in text_lower:
-        boosted_scores[7] = boosted_scores.get(7, 0) * 2.0
-    
-    # Boost SDG 7 for water splitting
-    if 'water splitting' in text_lower:
-        boosted_scores[7] = boosted_scores.get(7, 0) * 1.8
-    
-    # Boost SDG 7 for fuel cell general
-    if 'fuel cell' in text_lower:
-        boosted_scores[7] = boosted_scores.get(7, 0) * 1.7
-    
-    # Boost SDG 7 for electrochemical energy terms
-    electrochem_energy = ['electrochemical device', 'electrochemical energy', 'energy conversion', 'energy storage']
-    if any(term in text_lower for term in electrochem_energy):
-        boosted_scores[7] = boosted_scores.get(7, 0) * 1.4
-    
-    # Reduce SDG 9 for pure energy materials without synthesis focus
-    if not any(x in text_lower for x in ['synthesis', 'preparation', 'method', 'fabrication']):
-        if 'perovskite' in text_lower or 'electrolyte' in text_lower:
-            if 'proton' in text_lower or 'fuel cell' in text_lower:
-                boosted_scores[9] = boosted_scores.get(9, 0) * 0.6
     
     return boosted_scores
 
@@ -544,7 +421,1274 @@ def preprocess_text(text: str) -> tuple:
 
 
 # ============================================================================
-# ANALYSIS ENGINE (UPDATED: uses imported SDG_KEYWORDS)
+# COMPLETE SDG KEYWORDS DATABASE (UPDATED: 2800+ TERMS)
+# ============================================================================
+
+SDG_KEYWORDS = {
+    # SDG 1: No Poverty (50+ terms)
+    1: {
+        "exact_phrases": {
+            "extreme poverty": 3,
+            "social protection": 3,
+            "vulnerable population": 3,
+            "poverty alleviation": 3,
+            "poverty reduction": 3,
+            "multidimensional poverty": 3,
+            "poor household": 3,
+            "social safety net": 2,
+            "conditional cash transfer": 2,
+            "poverty line": 2,
+            "intergenerational poverty": 3,
+            "absolute poverty": 3,
+            "relative poverty": 3,
+            "working poor": 2,
+            "asset poverty": 2,
+            "wealth disparity": 2,
+            "economic marginalization": 2,
+            "economic vulnerability": 2,
+            "social assistance": 2,
+            "poor communities": 3,
+            "poverty trap": 3,
+            "basic income": 2,
+            "safety net": 2,
+            "food insecurity": 2,
+            "low socioeconomic": 2,
+            "economic shock": 2,
+        },
+        "single_words": {
+            "poverty": 3,
+            "livelihood": 2,
+            "homeless": 3,
+            "slum": 2,
+            "microfinance": 2,
+            "low-income": 2,
+            "indigent": 3,
+            "deprivation": 3,
+            "welfare": 2,
+            "homelessness": 3,
+            "underprivileged": 3,
+            "destitution": 3,
+            "subsistence": 2,
+            "charity": 2,
+            "food bank": 2,
+            "income inequality": 2,
+        },
+        "stems": {
+            "pover": 2,
+            "destitut": 2,
+            "depriv": 2,
+            "vulner": 2,
+            "inequ": 2,
+        }
+    },
+
+    # SDG 2: Zero Hunger (50+ terms)
+    2: {
+        "exact_phrases": {
+            "food security": 3,
+            "sustainable agriculture": 3,
+            "crop yield": 2,
+            "agricultural productivity": 2,
+            "smallholder farmer": 3,
+            "soil fertility": 2,
+            "food supply chain": 2,
+            "zero hunger": 3,
+            "food access": 2,
+            "subsistence farming": 2,
+            "crop failure": 3,
+            "hidden hunger": 3,
+            "post-harvest loss": 3,
+            "food system": 3,
+            "food desert": 3,
+            "land grabbing": 2,
+            "micronutrient deficiency": 3,
+            "food sovereignty": 2,
+            "crop diversification": 2,
+            "soil degradation": 2,
+            "food waste reduction": 2,
+            "sustainable intensification": 2,
+            "vertical farming": 2,
+            "precision agriculture": 2,
+            "food fortification": 2,
+            "nutrition security": 3,
+            "dietary diversity": 2,
+            "food assistance": 2,
+            "school feeding": 2,
+        },
+        "single_words": {
+            "hunger": 3,
+            "malnutrition": 3,
+            "undernutrition": 3,
+            "famine": 3,
+            "stunting": 3,
+            "wasting": 3,
+            "irrigation": 2,
+            "nutrition": 3,
+            "agroecology": 2,
+            "breastfeeding": 2,
+            "agroforestry": 2,
+            "hydroponics": 2,
+            "aquaponics": 2,
+        },
+        "stems": {
+            "hungr": 2,
+            "malnour": 2,
+            "undernour": 2,
+            "agricultur": 2,
+            "farming": 2,
+            "crop": 2,
+            "food": 2,
+        }
+    },
+
+    # SDG 3: Good Health & Well-being (UPDATED: 90+ terms)
+    3: {
+        "exact_phrases": {
+            "maternal health": 3,
+            "child mortality": 3,
+            "non-communicable disease": 3,
+            "mental health": 3,
+            "universal health coverage": 3,
+            "clinical trial": 2,
+            "drug resistance": 2,
+            "antimicrobial resistance": 3,
+            "drug delivery": 2,
+            "medicinal chemistry": 2,
+            "life expectancy": 3,
+            "health outcome": 2,
+            "health equity": 2,
+            "primary care": 2,
+            "health system": 2,
+            "infant mortality": 3,
+            "neonatal mortality": 3,
+            "under-five mortality": 3,
+            "reproductive health": 3,
+            "family planning": 2,
+            "sexual health": 2,
+            "substance abuse": 2,
+            "opioid crisis": 2,
+            "suicide prevention": 2,
+            "neglected tropical disease": 3,
+            "zoonotic disease": 2,
+            "vector-borne disease": 2,
+            "air pollution health": 2,
+            "waterborne disease": 2,
+            "occupational health": 2,
+            "health promotion": 2,
+            "disease prevention": 2,
+            "health literacy": 2,
+            "digital health": 2,
+            "personalized medicine": 2,
+            "precision medicine": 2,
+            "gene therapy": 2,
+            "point-of-care": 2,
+            "enzyme inhibition": 3,
+            "cell viability": 3,
+            "mtt assay": 3,
+            "srb assay": 3,
+            "apoptosis": 3,
+            "necrosis": 3,
+            "cell cycle arrest": 3,
+        },
+        "single_words": {
+            "disease": 3,
+            "mortality": 3,
+            "vaccine": 3,
+            "pandemic": 3,
+            "healthcare": 3,
+            "hospital": 2,
+            "epidemic": 3,
+            "tuberculosis": 3,
+            "malaria": 3,
+            "HIV": 3,
+            "cancer": 3,
+            "diabetes": 3,
+            "cardiovascular": 3,
+            "toxicology": 2,
+            "pharmacology": 2,
+            "biocompatibility": 2,
+            "sanitation": 2,
+            "morbidity": 3,
+            "contraception": 2,
+            "addiction": 2,
+            "immunotherapy": 2,
+            "biomarker": 2,
+            "diagnostic": 2,
+            "telemedicine": 2,
+            "cytotoxicity": 3,
+            "anticancer": 3,
+            "antimicrobial": 3,
+            "antibacterial": 3,
+            "antifungal": 3,
+            "antiviral": 3,
+            "anti-inflammatory": 3,
+            "analgesic": 3,
+            "antioxidant": 3,
+            "ic50": 3,
+            "ec50": 3,
+            "pharmacokinetics": 3,
+            "pharmacodynamics": 3,
+            "bioavailability": 3,
+        },
+        "stems": {
+            "diseas": 2,
+            "mortal": 2,
+            "vaccin": 2,
+            "pandem": 2,
+            "epidem": 2,
+            "health": 2,
+            "carcin": 2,
+            "diabet": 2,
+            "cardio": 2,
+            "toxicol": 2,
+            "pharmacol": 2,
+            "therap": 2,
+            "medic": 2,
+            "cytotox": 2,
+            "anticanc": 2,
+            "antimicrob": 2,
+            "apoptos": 2,
+        }
+    },
+
+    # SDG 4: Quality Education (50+ terms)
+    4: {
+        "exact_phrases": {
+            "school enrollment": 3,
+            "teacher training": 3,
+            "inclusive education": 3,
+            "early childhood education": 3,
+            "vocational training": 3,
+            "lifelong learning": 3,
+            "educational inequality": 3,
+            "digital literacy": 2,
+            "learning outcome": 3,
+            "quality education": 3,
+            "adult education": 3,
+            "access to school": 3,
+            "educational attainment": 2,
+            "chemistry education": 2,
+            "science education": 2,
+            "foundational literacy": 3,
+            "primary education": 3,
+            "secondary education": 2,
+            "higher education": 2,
+            "technical education": 2,
+            "STEM education": 3,
+            "online learning": 2,
+            "remote learning": 2,
+            "educational technology": 2,
+            "curriculum development": 2,
+            "teacher shortage": 2,
+            "school infrastructure": 2,
+            "girls education": 3,
+            "special education": 2,
+            "early learning": 2,
+            "educational equity": 3,
+            "learning poverty": 3,
+            "education financing": 2,
+            "teacher professional development": 2,
+            "educational assessment": 2,
+        },
+        "single_words": {
+            "literacy": 3,
+            "dropout": 3,
+            "pedagogy": 2,
+            "numeracy": 3,
+            "preschool": 2,
+            "kindergarten": 2,
+            "scholarship": 2,
+        },
+        "stems": {
+            "liter": 2,
+            "enrollment": 2,
+            "educat": 2,
+            "learn": 2,
+            "teach": 2,
+            "train": 2,
+            "school": 2,
+        }
+    },
+
+    # SDG 5: Gender Equality (50+ terms)
+    5: {
+        "exact_phrases": {
+            "gender equality": 3,
+            "women's empowerment": 3,
+            "gender discrimination": 3,
+            "gender gap": 3,
+            "female genital mutilation": 3,
+            "child marriage": 3,
+            "intimate partner violence": 3,
+            "gender-based violence": 3,
+            "glass ceiling": 3,
+            "women's rights": 3,
+            "gender parity": 3,
+            "gender wage gap": 3,
+            "female leadership": 2,
+            "women in stem": 2,
+            "women in chemistry": 2,
+            "reproductive rights": 2,
+            "gender mainstreaming": 2,
+            "gender norm": 2,
+            "gender stereotype": 2,
+            "women's health": 2,
+            "women's education": 2,
+            "women's economic empowerment": 3,
+            "gender justice": 3,
+            "sexual harassment": 3,
+            "domestic violence": 3,
+            "honor killing": 3,
+            "trafficking women": 3,
+            "gender audit": 2,
+            "gender budgeting": 2,
+            "gender quota": 2,
+            "transgender rights": 2,
+            "gender identity": 2,
+            "sexual orientation": 2,
+            "women in leadership": 2,
+            "female entrepreneurship": 2,
+            "maternal mortality": 2,
+            "adolescent girl": 2,
+        },
+        "single_words": {
+            "sexism": 3,
+            "misogyny": 3,
+            "patriarchy": 2,
+            "masculinity": 2,
+            "LGBTQ": 2,
+            "feminism": 2,
+            "empowerment": 2,
+        },
+        "stems": {
+            "gender": 2,
+            "women": 2,
+            "female": 2,
+            "femin": 2,
+            "discrimin": 2,
+            "empower": 2,
+            "equal": 2,
+        }
+    },
+
+    # SDG 6: Clean Water & Sanitation (65+ terms)
+    6: {
+        "exact_phrases": {
+            "drinking water": 3,
+            "water scarcity": 3,
+            "open defecation": 3,
+            "water quality": 3,
+            "water treatment": 3,
+            "water pollution": 3,
+            "heavy metal removal": 3,
+            "ion exchange": 2,
+            "membrane filtration": 3,
+            "photocatalysis water": 3,
+            "contaminant removal": 3,
+            "arsenic removal": 3,
+            "lead removal": 3,
+            "dye degradation": 3,
+            "water purification": 3,
+            "metal organic framework water": 3,
+            "advanced oxidation": 3,
+            "reverse osmosis": 3,
+            "water reuse": 2,
+            "water stress": 3,
+            "waterborne disease": 3,
+            "water access": 3,
+            "water security": 3,
+            "water conservation": 2,
+            "water governance": 2,
+            "integrated water management": 2,
+            "rainwater harvesting": 2,
+            "greywater recycling": 2,
+            "blackwater treatment": 2,
+            "septic system": 2,
+            "hygiene promotion": 2,
+            "activated carbon": 2,
+            "biochar water": 2,
+            "hydrogel water": 2,
+            "capacitive deionization": 2,
+            "forward osmosis": 2,
+            "membrane distillation": 2,
+        },
+        "single_words": {
+            "sanitation": 3,
+            "wastewater": 3,
+            "desalination": 3,
+            "adsorption": 3,
+            "nanofiltration": 3,
+            "sorbent": 3,
+            "groundwater": 2,
+            "watershed": 2,
+            "WASH": 3,
+            "electrocoagulation": 2,
+            "disinfection": 2,
+            "chlorination": 2,
+            "ultrafiltration": 2,
+            "microfiltration": 2,
+            "flocculation": 2,
+            "coagulation": 2,
+            "sedimentation": 2,
+            "filtration": 2,
+            "latrine": 2,
+            "handwashing": 2,
+        },
+        "stems": {
+            "water": 2,
+            "sanit": 2,
+            "purif": 2,
+            "filtr": 2,
+            "adsorb": 2,
+            "desalin": 2,
+            "contamin": 2,
+            "removal": 2,
+            "degrad": 2,
+            "oxid": 2,
+            "membran": 2,
+            "wastewat": 2,
+        }
+    },
+
+    # SDG 7: Affordable & Clean Energy (75+ terms)
+    7: {
+        "exact_phrases": {
+            "renewable energy": 3,
+            "solar power": 3,
+            "wind energy": 3,
+            "energy efficiency": 3,
+            "energy access": 3,
+            "clean cooking": 3,
+            "energy transition": 3,
+            "hydrogen evolution": 3,
+            "oxygen evolution": 3,
+            "fuel cell": 3,
+            "water splitting": 3,
+            "hydrogen production": 3,
+            "solar fuel": 3,
+            "CO2 reduction": 3,
+            "artificial photosynthesis": 3,
+            "perovskite solar": 3,
+            "energy storage": 3,
+            "lithium ion": 3,
+            "solid state battery": 3,
+            "green energy": 3,
+            "clean energy": 3,
+            "energy poverty": 3,
+            "solar cell": 3,
+            "organic photovoltaic": 3,
+            "dye-sensitized solar": 3,
+            "quantum dot solar": 3,
+            "wind turbine": 2,
+            "green hydrogen": 3,
+            "ammonia fuel": 2,
+            "metal-air battery": 2,
+            "redox flow battery": 2,
+            "lithium sulfur": 2,
+            "solid electrolyte": 2,
+            "energy harvesting": 2,
+            "smart grid": 2,
+            "rural electrification": 3,
+            "energy justice": 2,
+            "sodium ion": 2,
+        },
+        "single_words": {
+            "biofuel": 3,
+            "hydropower": 3,
+            "decarbonization": 3,
+            "photovoltaics": 3,
+            "electrification": 3,
+            "catalysis": 3,
+            "photocatalysis": 3,
+            "electrocatalysis": 3,
+            "electrolyzer": 3,
+            "battery": 3,
+            "supercapacitor": 3,
+            "thermoelectric": 2,
+            "geothermal": 2,
+            "biomass": 2,
+            "biogas": 2,
+            "biomethane": 2,
+            "bioethanol": 2,
+            "biodiesel": 2,
+            "piezoelectric": 2,
+            "triboelectric": 2,
+            "microgrid": 2,
+            "off-grid": 3,
+        },
+        "stems": {
+            "energy": 2,
+            "renew": 2,
+            "solar": 2,
+            "wind": 2,
+            "biofuel": 2,
+            "hydro": 2,
+            "catalys": 2,
+            "electrocatalys": 2,
+            "photocatalys": 2,
+            "hydrogen": 2,
+            "electrolysis": 2,
+            "photovolta": 2,
+            "batter": 2,
+            "capacitor": 2,
+            "electrif": 2,
+        }
+    },
+
+    # SDG 8: Decent Work & Economic Growth (50+ terms)
+    8: {
+        "exact_phrases": {
+            "decent work": 3,
+            "labor rights": 3,
+            "forced labor": 3,
+            "child labor": 3,
+            "minimum wage": 3,
+            "informal economy": 3,
+            "job creation": 3,
+            "economic growth": 3,
+            "working conditions": 3,
+            "occupational safety": 3,
+            "fair wages": 3,
+            "workers' rights": 3,
+            "precarious employment": 3,
+            "youth unemployment": 3,
+            "labor exploitation": 3,
+            "gig economy": 2,
+            "decent job": 3,
+            "labor market": 2,
+            "wage inequality": 2,
+            "collective bargaining": 2,
+            "workplace safety": 3,
+            "GDP per capita": 2,
+            "economic productivity": 2,
+            "full employment": 3,
+            "labor participation": 2,
+            "skill development": 2,
+            "workforce development": 2,
+            "green jobs": 3,
+            "sustainable tourism": 2,
+            "economic diversification": 2,
+            "innovation economy": 2,
+            "digital economy": 2,
+            "circular economy jobs": 2,
+            "social enterprise": 2,
+            "labor productivity": 2,
+            "economic resilience": 2,
+        },
+        "single_words": {
+            "unemployment": 3,
+            "productivity": 2,
+            "entrepreneurship": 2,
+            "employment": 2,
+            "union": 2,
+            "underemployment": 2,
+            "apprenticeship": 2,
+            "internship": 2,
+            "cooperative": 2,
+        },
+        "stems": {
+            "employ": 2,
+            "labor": 2,
+            "work": 2,
+            "job": 2,
+            "wage": 2,
+            "econom": 2,
+            "growth": 2,
+        }
+    },
+
+    # SDG 9: Industry, Innovation & Infrastructure (UPDATED: 120+ terms)
+    9: {
+        "exact_phrases": {
+            "technology transfer": 3,
+            "sustainable industry": 3,
+            "materials science": 3,
+            "advanced materials": 3,
+            "thin film": 3,
+            "quantum dot": 3,
+            "2d materials": 3,
+            "carbon nanotube": 3,
+            "metal organic framework": 3,
+            "covalent organic framework": 3,
+            "smart material": 3,
+            "functional material": 3,
+            "additive manufacturing": 2,
+            "digital infrastructure": 3,
+            "supply chain": 2,
+            "research and development": 2,
+            "industrial ecology": 2,
+            "shape memory alloy": 2,
+            "photonic crystal": 2,
+            "3d printing": 2,
+            "4d printing": 2,
+            "industry 4.0": 2,
+            "industrial automation": 2,
+            "smart manufacturing": 2,
+            "digital twin": 2,
+            "internet of things industry": 2,
+            "artificial intelligence industry": 2,
+            "synthetic method": 3,
+            "organic synthesis": 3,
+            "chemical synthesis": 3,
+            "reaction development": 3,
+            "methodology development": 3,
+            "catalytic method": 3,
+            "synthetic approach": 3,
+            "synthetic strategy": 3,
+            "reaction optimization": 3,
+            "reaction condition": 3,
+            "reaction scope": 3,
+            "substrate scope": 3,
+            "functional group tolerance": 3,
+            "scalable synthesis": 3,
+            "gram-scale synthesis": 3,
+            "flow chemistry": 3,
+            "continuous flow": 3,
+            "microwave-assisted synthesis": 3,
+            "sonochemical synthesis": 3,
+            "mechanochemical synthesis": 3,
+        },
+        "single_words": {
+            "infrastructure": 3,
+            "industrialization": 3,
+            "innovation": 3,
+            "nanomaterials": 3,
+            "composite": 2,
+            "semiconductor": 3,
+            "graphene": 3,
+            "zeolite": 2,
+            "mxene": 3,
+            "perovskite": 3,
+            "manufacturing": 2,
+            "R&D": 2,
+            "broadband": 2,
+            "connectivity": 2,
+            "factory": 2,
+            "automation": 2,
+            "patent": 2,
+            "nanotechnology": 3,
+            "biotechnology": 2,
+            "biomaterials": 2,
+            "hydrogel": 2,
+            "polymer": 2,
+            "plastic": 2,
+            "elastomer": 2,
+            "ceramic": 2,
+            "metal alloy": 2,
+            "metamaterial": 2,
+            "plasmonic": 2,
+            "nanoparticle": 2,
+            "nanowire": 2,
+            "nanotube": 2,
+            "nanosheet": 2,
+            "bioprinting": 2,
+            "robotics": 2,
+            "synthesis": 3,
+            "preparation": 3,
+            "methodology": 3,
+            "protocol": 2,
+            "procedure": 2,
+            "reagent": 2,
+            "catalyst": 3,
+            "selectivity": 2,
+            "conversion": 2,
+            "optimization": 2,
+            "characterization": 2,
+            "innovation": 3,
+            "discovery": 2,
+        },
+        "stems": {
+            "material": 2,
+            "industr": 2,
+            "innov": 2,
+            "infrastructur": 2,
+            "manufactur": 2,
+            "nanomateri": 2,
+            "nanotech": 2,
+            "synthes": 2,
+            "fabricat": 2,
+            "technolog": 2,
+            "prepar": 2,
+            "methodolog": 2,
+            "catalys": 2,
+            "optimiz": 2,
+            "character": 2,
+            "discoveri": 2,
+        }
+    },
+
+    # SDG 10: Reduced Inequalities (45+ terms)
+    10: {
+        "exact_phrases": {
+            "income inequality": 3,
+            "wealth gap": 3,
+            "social exclusion": 3,
+            "Gini coefficient": 3,
+            "social mobility": 3,
+            "economic disparity": 3,
+            "inclusive growth": 3,
+            "vulnerable group": 3,
+            "ethnic inequality": 3,
+            "socioeconomic inequality": 3,
+            "wealth concentration": 3,
+            "social justice": 2,
+            "equal opportunity": 3,
+            "horizontal inequality": 3,
+            "vertical inequality": 3,
+            "relative poverty": 2,
+            "affirmative action": 2,
+            "redistributive policy": 2,
+            "universal access": 2,
+            "racial inequality": 3,
+            "ethnic minority": 2,
+            "religious minority": 2,
+            "linguistic minority": 2,
+            "disability inclusion": 2,
+            "social integration": 2,
+            "social cohesion": 2,
+            "discriminatory law": 2,
+            "inequality reduction": 3,
+            "pro-poor growth": 3,
+            "inclusive development": 2,
+            "leave no one behind": 3,
+        },
+        "single_words": {
+            "marginalization": 3,
+            "discrimination": 3,
+            "minority": 2,
+            "indigenous": 2,
+            "refugee": 3,
+            "migrant": 2,
+            "inequality": 3,
+            "redistribution": 2,
+            "remittance": 2,
+            "diaspora": 2,
+            "exclusion": 2,
+            "stigmatization": 2,
+        },
+        "stems": {
+            "inequ": 2,
+            "dispar": 2,
+            "exclus": 2,
+            "margin": 2,
+            "refuge": 2,
+            "discrimin": 2,
+        }
+    },
+
+    # SDG 11: Sustainable Cities & Communities (55+ terms)
+    11: {
+        "exact_phrases": {
+            "public transport": 3,
+            "affordable housing": 3,
+            "waste management": 3,
+            "air pollution": 3,
+            "green space": 2,
+            "urban sprawl": 3,
+            "disaster resilience": 3,
+            "urban poverty": 3,
+            "informal settlement": 3,
+            "smart city": 2,
+            "green building": 2,
+            "indoor air quality": 2,
+            "volatile organic compound": 2,
+            "particulate matter": 2,
+            "urban planning": 2,
+            "sustainable transport": 3,
+            "cycling infrastructure": 2,
+            "bus rapid transit": 2,
+            "light rail": 2,
+            "electric vehicle": 2,
+            "urban heat island": 2,
+            "green roof": 2,
+            "vertical garden": 2,
+            "permeable pavement": 2,
+            "stormwater management": 2,
+            "flood resilience": 2,
+            "earthquake resilience": 2,
+            "heritage preservation": 2,
+            "cultural heritage": 2,
+            "urban regeneration": 2,
+            "housing crisis": 2,
+            "homelessness urban": 2,
+            "municipal waste": 2,
+            "urban agriculture": 2,
+            "community garden": 2,
+            "public space": 2,
+            "urban governance": 2,
+        },
+        "single_words": {
+            "urban": 3,
+            "slum": 3,
+            "urbanization": 2,
+            "walkability": 2,
+            "metro": 2,
+            "gentrification": 2,
+            "placemaking": 2,
+        },
+        "stems": {
+            "city": 2,
+            "hous": 2,
+            "transport": 2,
+            "pollut": 2,
+            "waste": 2,
+            "resili": 2,
+            "urban": 2,
+        }
+    },
+
+    # SDG 12: Responsible Consumption & Production (65+ terms)
+    12: {
+        "exact_phrases": {
+            "circular economy": 3,
+            "sustainable consumption": 3,
+            "plastic pollution": 3,
+            "chemical waste": 3,
+            "hazardous waste": 3,
+            "waste valorization": 3,
+            "plastic recycling": 3,
+            "polymer degradation": 3,
+            "green chemistry": 3,
+            "atom economy": 2,
+            "solvent free": 2,
+            "renewable feedstock": 3,
+            "biomass conversion": 3,
+            "lignin valorization": 3,
+            "food waste": 3,
+            "life cycle assessment": 3,
+            "material footprint": 3,
+            "zero waste": 3,
+            "resource efficiency": 3,
+            "closed loop": 3,
+            "industrial symbiosis": 2,
+            "sustainable packaging": 3,
+            "biodegradable plastic": 3,
+            "single-use plastic": 3,
+            "microplastic pollution": 3,
+            "waste-to-energy": 2,
+            "pyrolysis waste": 2,
+            "gasification waste": 2,
+            "landfill reduction": 2,
+            "extended producer responsibility": 3,
+            "product stewardship": 2,
+            "sustainable procurement": 3,
+            "green supply chain": 2,
+            "carbon labeling": 2,
+            "environmental footprint": 2,
+            "water footprint": 2,
+            "ecological footprint": 2,
+            "sustainable lifestyle": 2,
+            "conscious consumption": 2,
+        },
+        "single_words": {
+            "waste": 3,
+            "recycling": 3,
+            "e-waste": 3,
+            "overconsumption": 3,
+            "biodegradable": 3,
+            "bioplastic": 3,
+            "cellulose": 2,
+            "composting": 2,
+            "upcycling": 2,
+            "downcycling": 2,
+            "compostable": 2,
+            "ecodesign": 2,
+            "minimalism": 2,
+        },
+        "stems": {
+            "recycl": 2,
+            "consumpt": 2,
+            "degrad": 2,
+            "biodegrad": 2,
+            "bioplast": 2,
+            "valor": 2,
+            "circular": 2,
+            "feedstock": 2,
+            "biomass": 2,
+            "packag": 2,
+        }
+    },
+
+    # SDG 13: Climate Action (55+ terms)
+    13: {
+        "exact_phrases": {
+            "climate change": 3,
+            "global warming": 3,
+            "greenhouse gas": 3,
+            "CO2 emission": 3,
+            "carbon emission": 3,
+            "net zero": 3,
+            "carbon neutrality": 3,
+            "climate adaptation": 3,
+            "climate mitigation": 3,
+            "carbon capture": 3,
+            "CO2 capture": 3,
+            "carbon utilization": 3,
+            "CO2 conversion": 3,
+            "direct air capture": 3,
+            "sea level rise": 3,
+            "extreme weather": 3,
+            "Paris Agreement": 3,
+            "carbon budget": 3,
+            "climate resilience": 3,
+            "methane capture": 3,
+            "carbon dioxide removal": 3,
+            "climate risk": 3,
+            "climate disaster": 3,
+            "climate policy": 2,
+            "climate finance": 2,
+            "loss and damage": 3,
+            "tipping point": 3,
+            "temperature rise": 3,
+            "climate vulnerability": 3,
+            "climate justice": 2,
+            "climate action": 3,
+            "emission reduction": 3,
+            "methane emission": 3,
+            "nitrous oxide": 2,
+            "fluorinated gas": 2,
+            "carbon sink": 2,
+            "blue carbon": 2,
+            "nature-based solution": 2,
+            "climate engineering": 2,
+            "carbon offset": 2,
+            "carbon credit": 2,
+            "emission trading": 2,
+        },
+        "single_words": {
+            "decarbonization": 3,
+            "drought": 2,
+            "flood": 2,
+            "heatwave": 2,
+            "wildfire": 2,
+            "hurricane": 2,
+            "cyclone": 2,
+        },
+        "stems": {
+            "climat": 2,
+            "warm": 2,
+            "emiss": 2,
+            "carbon": 2,
+            "captur": 2,
+            "mitig": 2,
+            "adapt": 2,
+            "neutral": 2,
+            "greenhous": 2,
+        }
+    },
+
+    # SDG 14: Life Below Water (55+ terms)
+    14: {
+        "exact_phrases": {
+            "coral reef": 3,
+            "marine pollution": 3,
+            "plastic in ocean": 3,
+            "marine protected area": 3,
+            "ocean acidification": 3,
+            "marine debris": 3,
+            "marine ecosystem": 3,
+            "marine biodiversity": 3,
+            "ocean warming": 3,
+            "marine toxicology": 2,
+            "blue economy": 2,
+            "coastal zone": 2,
+            "kelp forest": 2,
+            "ocean conservation": 3,
+            "sustainable fishing": 3,
+            "illegal fishing": 3,
+            "marine reserve": 3,
+            "ocean governance": 2,
+            "deep sea mining": 2,
+            "coral bleaching": 3,
+            "marine heatwave": 2,
+            "sea turtle": 2,
+            "marine mammal": 2,
+            "shark conservation": 2,
+            "fish stock": 2,
+            "fishing quota": 2,
+            "marine spatial planning": 2,
+            "ocean observing": 2,
+            "marine chemistry": 2,
+            "ocean biogeochemistry": 2,
+            "tidal flat": 2,
+        },
+        "single_words": {
+            "marine": 3,
+            "ocean": 3,
+            "overfishing": 3,
+            "microplastic": 3,
+            "nanoplastic": 3,
+            "bycatch": 3,
+            "aquaculture": 2,
+            "seafood": 2,
+            "fishery": 2,
+            "mangrove": 2,
+            "seagrass": 2,
+            "whale": 2,
+            "dolphin": 2,
+            "estuary": 2,
+            "lagoon": 2,
+        },
+        "stems": {
+            "ocean": 2,
+            "marin": 2,
+            "fish": 2,
+            "plastic": 2,
+            "microplast": 2,
+            "acidif": 2,
+            "ecosystem": 2,
+            "biodivers": 2,
+            "coral": 2,
+        }
+    },
+
+    # SDG 15: Life On Land (60+ terms)
+    15: {
+        "exact_phrases": {
+            "land degradation": 3,
+            "habitat loss": 3,
+            "soil remediation": 2,
+            "heavy metal soil": 2,
+            "endangered species": 3,
+            "invasive species": 3,
+            "biodiversity loss": 3,
+            "ecosystem service": 2,
+            "soil erosion": 3,
+            "land use change": 2,
+            "forest fragmentation": 3,
+            "species extinction": 3,
+            "restoration ecology": 2,
+            "protected area": 2,
+            "national park": 2,
+            "wildlife corridor": 2,
+            "ecological connectivity": 2,
+            "soil contamination": 2,
+            "land rehabilitation": 2,
+            "mine tailings": 2,
+            "ecological restoration": 2,
+            "native species": 2,
+            "keystone species": 2,
+            "flagship species": 2,
+            "umbrella species": 2,
+            "indicator species": 2,
+            "pollinator decline": 2,
+            "insect decline": 2,
+            "amphibian decline": 2,
+            "bird conservation": 2,
+        },
+        "single_words": {
+            "deforestation": 3,
+            "biodiversity": 3,
+            "ecosystem": 3,
+            "desertification": 3,
+            "phytoremediation": 2,
+            "bioremediation": 2,
+            "reforestation": 3,
+            "wildlife": 3,
+            "poaching": 3,
+            "terrestrial": 3,
+            "mangrove": 2,
+            "wetland": 2,
+            "conservation": 2,
+            "forest": 2,
+            "rewilding": 2,
+            "agroforestry": 2,
+            "brownfield": 2,
+            "pollinator": 2,
+        },
+        "stems": {
+            "deforest": 2,
+            "ecosystem": 2,
+            "habitat": 2,
+            "species": 2,
+            "remediat": 2,
+            "reforest": 2,
+            "conserv": 2,
+            "terrestri": 2,
+            "biodivers": 2,
+        }
+    },
+
+    # SDG 16: Peace, Justice & Strong Institutions (55+ terms)
+    16: {
+        "exact_phrases": {
+            "rule of law": 3,
+            "access to justice": 3,
+            "human rights": 3,
+            "armed conflict": 3,
+            "organized crime": 3,
+            "human trafficking": 3,
+            "civil war": 3,
+            "legal aid": 3,
+            "crime prevention": 2,
+            "judicial independence": 2,
+            "transitional justice": 3,
+            "international law": 2,
+            "humanitarian law": 2,
+            "refugee protection": 2,
+            "internally displaced": 2,
+            "birth registration": 2,
+            "legal identity": 2,
+            "access to information": 2,
+            "press freedom": 2,
+            "civil society": 2,
+            "good governance": 2,
+            "institutional reform": 2,
+            "police reform": 2,
+            "prison reform": 2,
+            "restorative justice": 2,
+        },
+        "single_words": {
+            "peace": 3,
+            "conflict": 3,
+            "violence": 3,
+            "corruption": 3,
+            "war": 3,
+            "anti-corruption": 3,
+            "peacebuilding": 3,
+            "trafficking": 3,
+            "bribery": 3,
+            "transparency": 2,
+            "accountability": 2,
+            "genocide": 3,
+            "torture": 3,
+            "disarmament": 2,
+            "demobilization": 2,
+            "reintegration": 2,
+            "ceasefire": 2,
+            "mediation": 2,
+            "diplomacy": 2,
+            "statelessness": 2,
+        },
+        "stems": {
+            "peace": 2,
+            "conflict": 2,
+            "violen": 2,
+            "corrupt": 2,
+            "justic": 2,
+            "rights": 2,
+            "traffick": 2,
+            "legal": 2,
+        }
+    },
+
+    # SDG 17: Partnerships for the Goals (UPDATED: removed 'develop' stem)
+    17: {
+        "exact_phrases": {
+            "international cooperation": 3,
+            "development aid": 3,
+            "technology transfer": 3,
+            "capacity building": 3,
+            "global partnership": 3,
+            "south-south cooperation": 3,
+            "official development assistance": 3,
+            "global governance": 2,
+            "finance for development": 3,
+            "public-private": 3,
+            "knowledge sharing": 2,
+            "resource mobilization": 3,
+            "policy coherence": 2,
+            "global solidarity": 3,
+            "triangular cooperation": 3,
+            "global fund": 2,
+            "stakeholder engagement": 2,
+            "data revolution": 2,
+            "capacity development": 2,
+            "technical assistance": 2,
+            "aid effectiveness": 2,
+            "development cooperation": 2,
+            "donor coordination": 2,
+            "impact investing": 2,
+            "blended finance": 2,
+            "green bond": 2,
+            "social bond": 2,
+            "sustainable finance": 2,
+            "tax cooperation": 2,
+            "illicit financial flows": 2,
+            "debt sustainability": 2,
+            "trade facilitation": 2,
+            "fair trade": 2,
+            "ethical supply chain": 2,
+            "global indicator framework": 2,
+            "monitoring and evaluation": 2,
+            "SDG reporting": 2,
+            "corporate sustainability": 2,
+            "multi-stakeholder partnership": 3,
+            "public-private partnership": 3,
+        },
+        "single_words": {
+            "partnership": 3,
+            "multi-stakeholder": 3,
+            "collaboration": 2,
+            "multilateral": 2,
+            "philanthropy": 2,
+            "ESG": 2,
+        },
+        "stems": {
+            "partnership": 2,
+            "cooper": 2,
+            "collabor": 2,
+            "global": 2,
+        }
+    }
+}
+
+
+# SDG Names and Icons
+SDG_NAMES = {
+    1: "No Poverty", 2: "Zero Hunger", 3: "Good Health & Well-being",
+    4: "Quality Education", 5: "Gender Equality", 6: "Clean Water & Sanitation",
+    7: "Affordable & Clean Energy", 8: "Decent Work & Economic Growth",
+    9: "Industry, Innovation & Infrastructure", 10: "Reduced Inequalities",
+    11: "Sustainable Cities & Communities", 12: "Responsible Consumption & Production",
+    13: "Climate Action", 14: "Life Below Water", 15: "Life On Land",
+    16: "Peace, Justice & Strong Institutions", 17: "Partnerships for the Goals"
+}
+
+# SDG Icons as SVG (inline base64 would be too long, using emoji representations)
+SDG_ICONS = {
+    1: "🚫", 2: "🍞", 3: "❤️", 4: "📚", 5: "⚧", 6: "💧", 7: "⚡", 8: "💼",
+    9: "🏭", 10: "⚖️", 11: "🏙️", 12: "♻️", 13: "🌍", 14: "🌊", 15: "🌳",
+    16: "🕊️", 17: "🤝"
+}
+
+# Загрузка иконок из папки icons
+import os
+from PIL import Image
+import base64
+from io import BytesIO
+
+def load_sdg_icon(sdg_num):
+    """Load SDG icon from icons folder and convert to base64 for HTML display"""
+    icon_path = Path(f"icons/{sdg_num:02d}.jpg")
+    if icon_path.exists():
+        with open(icon_path, "rb") as f:
+            img_data = f.read()
+        img_base64 = base64.b64encode(img_data).decode()
+        return f'<img src="data:image/jpeg;base64,{img_base64}" style="width: 48px; height: 48px; object-fit: contain;">'
+    else:
+        # Fallback emoji if icon not found
+        fallback = {1: "🚫", 2: "🍞", 3: "❤️", 4: "📚", 5: "⚧", 6: "💧", 7: "⚡", 8: "💼",
+                    9: "🏭", 10: "⚖️", 11: "🏙️", 12: "♻️", 13: "🌍", 14: "🌊", 15: "🌳",
+                    16: "🕊️", 17: "🤝"}
+        return fallback.get(sdg_num, "🎯")
+
+# Cache loaded icons
+@st.cache_data
+def get_sdg_icon_html(sdg_num):
+    return load_sdg_icon(sdg_num)
+
+# SDG Colors for visualization
+SDG_COLORS = {
+    1: "#E5243B", 2: "#DDA63A", 3: "#4C9F38", 4: "#C5192D", 5: "#FF3A21",
+    6: "#26BDE2", 7: "#FCC30B", 8: "#A21942", 9: "#FD6925", 10: "#DD1367",
+    11: "#FD9D24", 12: "#BF8B2E", 13: "#3F7E44", 14: "#0A97D9", 15: "#56C02B",
+    16: "#00689D", 17: "#19486A"
+}
+
+
+# ============================================================================
+# IMPROVED ANALYSIS ENGINE (UPDATED WITH CONTEXT RULES)
 # ============================================================================
 
 def has_whole_word(text, word):
@@ -944,10 +2088,10 @@ st.markdown('<div class="grid-overlay"></div>', unsafe_allow_html=True)
 
 st.markdown("""
 <div style="text-align: center; margin-bottom: 2rem;">
-    <div class="status-badge" style="margin-bottom: 1rem;">⚛️ ACTIVE · HYBRID CLASSIFIER v6.1</div>
+    <div class="status-badge" style="margin-bottom: 1rem;">⚛️ ACTIVE · HYBRID CLASSIFIER v6.0</div>
     <div class="neon-text">SDG SPECTRAL ANALYZER</div>
     <div style="color: #666; font-size: 0.8rem; letter-spacing: 2px; margin-top: 0.5rem;">
-        CHEMICAL & MATERIALS SCIENCE EDITION • 3200+ TERMS • WORD BOUNDARY MATCHING • CONTEXT AWARE • ENERGY MATERIALS OPTIMIZED
+        CHEMICAL & MATERIALS SCIENCE EDITION • 2800+ TERMS • WORD BOUNDARY MATCHING • CONTEXT AWARE
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -980,7 +2124,7 @@ with col_left:
     abstract = st.text_area(
         "Abstract Input",
         height=280,
-        placeholder="// PASTE ABSTRACT HERE (150-300 words recommended)\n// HYBRID MODE: word boundary matching + stemming + context rules\n// Database contains 3200+ weighted keywords across all 17 SDGs\n// Stopwords filter active (200+ terms)\n\nExample:\n\"We synthesized a novel catalytic MOF for photocatalytic hydrogen evolution through water splitting using renewable energy sources.\"",
+        placeholder="// PASTE ABSTRACT HERE (150-300 words recommended)\n// HYBRID MODE: word boundary matching + stemming + context rules\n// Database contains 2800+ weighted keywords across all 17 SDGs\n// Stopwords filter active (200+ terms)\n\nExample:\n\"We synthesized a novel catalytic MOF for photocatalytic hydrogen evolution through water splitting using renewable energy sources.\"",
         label_visibility="collapsed"
     )
     
@@ -1042,16 +2186,6 @@ with col_right:
         if analysis_result.get("multi_label"):
             multi_label_html = '<div class="status-badge" style="margin-top: 0.5rem;">🔗 MULTI-LABEL DETECTED</div>'
         
-        # Function to load icon (inline for each display)
-        def get_sdg_icon_html(sdg_num):
-            icon_path = Path(f"icons/{sdg_num:02d}.jpg")
-            if icon_path.exists():
-                with open(icon_path, "rb") as f:
-                    img_data = f.read()
-                img_base64 = base64.b64encode(img_data).decode()
-                return f'<img src="data:image/jpeg;base64,{img_base64}" style="width: 48px; height: 48px; object-fit: contain;">'
-            else:
-                return SDG_ICONS.get(sdg_num, "🎯")
         
         st.markdown(f"""
         <div class="hologram-card" style="text-align: center;">
@@ -1072,7 +2206,7 @@ with col_right:
                 <div class="status-badge">🎯 SPECTRAL MATCH</div>
                 <div class="status-badge">🔬 HYBRID MODE</div>
                 <div class="status-badge">📊 TF WEIGHTED</div>
-                <div class="status-badge">📚 3200+ TERMS</div>
+                <div class="status-badge">📚 2800+ TERMS</div>
                 <div class="status-badge">🧹 STOPWORDS ACTIVE</div>
             </div>
             {multi_label_html}
@@ -1201,7 +2335,7 @@ with col_right:
 st.markdown("""
 <div style="margin-top: 2rem; padding: 1rem; text-align: center; border-top: 1px solid rgba(0,255,136,0.1);">
     <div style="font-size: 0.6rem; color: #444; letter-spacing: 1px;">
-        SDG SPECTRAL ANALYZER v6.1 • HYBRID MODE (WORD BOUNDARY + STEM + CONTEXT RULES) • 3200+ TERMS • 200+ STOPWORDS • CHEMICAL & MATERIALS SCIENCE EDITION • ENERGY MATERIALS OPTIMIZED
+        SDG SPECTRAL ANALYZER v6.0 • HYBRID MODE (WORD BOUNDARY + STEM + CONTEXT RULES) • 2800+ TERMS • 200+ STOPWORDS • CHEMICAL & MATERIALS SCIENCE EDITION
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -1251,7 +2385,7 @@ with st.sidebar:
     st.markdown("### About")
     st.markdown("""
     <div style="font-size: 0.7rem; color: #888;">
-    <p><strong>SDG Spectral Analyzer v6.1</strong></p>
+    <p><strong>SDG Spectral Analyzer v6.0</strong></p>
     <p>Hybrid classification engine using:</p>
     <ul>
         <li>Word boundary matching</li>
@@ -1259,12 +2393,10 @@ with st.sidebar:
         <li>TF-weighted scoring</li>
         <li>Multi-label detection</li>
         <li>200+ stopwords filtering</li>
-        <li>Context-aware rules (12 rules)</li>
+        <li>Context-aware rules</li>
         <li>Domain detection (chemistry, biology, materials)</li>
-        <li><strong>NEW: Energy materials disambiguation</strong></li>
-        <li><strong>NEW: Perovskite + proton → SDG 7 priority</strong></li>
     </ul>
-    <p>Database: 3200+ terms across all 17 SDGs</p>
+    <p>Database: 2800+ terms across all 17 SDGs</p>
     <p>Optimized for 150-300 word abstracts in chemistry and materials science</p>
     </div>
     """, unsafe_allow_html=True)
