@@ -4,3 +4,6 @@ requests
 streamlit
 nltk
 regex
+spacy
+plotly
+Pillow
