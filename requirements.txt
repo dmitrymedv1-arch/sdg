@@ -1,0 +1,7 @@
+streamlit
+pandas
+requests
+aiohttp
+asyncio
+python-dotenv
+tenacity
