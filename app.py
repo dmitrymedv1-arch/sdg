@@ -1727,6 +1727,8 @@ with col_right:
         # Primary SDG Display
         primary_confidence = confidence.get(primary_sdg, 0)
         
+        multi_label_badge = '<div class="status-badge" style="margin-top: 0.5rem;">🔗 MULTI-LABEL DETECTED</div>' if analysis_result.get("multi_label") else ''
+        
         st.markdown(f"""
         <div class="hologram-card" style="text-align: center;">
             <div style="font-size: 0.8rem; color: #888; letter-spacing: 2px;">PRIMARY SDG CLASSIFICATION</div>
@@ -1750,7 +1752,7 @@ with col_right:
                 <div class="status-badge">📊 TF WEIGHTED</div>
                 <div class="status-badge">📚 2000+ TERMS</div>
             </div>
-            {f'<div class="status-badge" style="margin-top: 0.5rem;">🔗 MULTI-LABEL DETECTED</div>' if analysis_result.get("multi_label") else ''}
+            {multi_label_badge}
         </div>
         """, unsafe_allow_html=True)
         
