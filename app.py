@@ -1481,14 +1481,15 @@ with col_right:
             # Aggregate unique terms with their types
             unique_terms = {}
             for item in matched_terms:
-                # [IMPROVEMENT 4.5] MatchRecord всегда имеет фиксированные поля
-                if isinstance(item, MatchRecord):
+                # [FIX] duck-typing вместо isinstance — устойчиво к hot-reload
+                # и к старым кортежам в session_state
+                if hasattr(item, "sdg") and hasattr(item, "term"):
                     sdg = item.sdg
                     term = item.term
                     match_type = item.match_type
                     weight = item.weight
                     tf = item.tf
-                    context_mult = item.context_multiplier
+                    context_mult = getattr(item, "context_multiplier", 1.0)
                 else:
                     # Обратная совместимость на случай старых данных в session_state
                     if len(item) >= 6:
