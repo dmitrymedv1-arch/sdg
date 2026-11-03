@@ -1458,20 +1458,26 @@ with col_right:
                 percent = min(100, conf)
                 color = SDG_COLORS.get(sdg, '#00ff88')
                 name = html.escape(SDG_NAMES.get(sdg, 'Unknown')[:40])
-                secondary_html_parts.append(f"""
-                <div class="sdg-card" style="margin-bottom: 0.75rem; padding: 0.75rem; background: rgba(15, 15, 25, 0.4); border-radius: 12px; border: 1px solid rgba(0,255,136,0.2);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                        <span style="font-size: 0.8rem; color: #00ff88; display: flex; align-items: center; gap: 8px;">
-                            <span style="display: inline-block;">{get_sdg_icon_html(sdg)}</span>
-                            <span>SDG {sdg} • {name}</span>
-                        </span>
-                        <span style="font-size: 0.7rem; color: #00ff88;">{percent}%</span>
-                    </div>
-                    <div style="height: 2px; background: rgba(0,255,136,0.2); border-radius: 2px;">
-                        <div style="width: {percent}%; height: 100%; background: {color}; border-radius: 2px;"></div>
-                    </div>
-                </div>
-                """)
+                # [FIX HTML] Ровно один открывающий .sdg-card и ровно один
+                # закрывающий </div> для него. Внутренние <div> сбалансированы.
+                secondary_html_parts.append(
+                    '<div class="sdg-card" style="margin-bottom: 0.75rem; padding: 0.75rem; '
+                    'background: rgba(15, 15, 25, 0.4); border-radius: 12px; '
+                    'border: 1px solid rgba(0,255,136,0.2);">'
+                    '<div style="display: flex; justify-content: space-between; '
+                    'align-items: center; margin-bottom: 0.5rem;">'
+                    '<span style="font-size: 0.8rem; color: #00ff88; display: flex; '
+                    'align-items: center; gap: 8px;">'
+                    f'<span style="display: inline-block;">{get_sdg_icon_html(sdg)}</span>'
+                    f'<span>SDG {sdg} • {name}</span>'
+                    '</span>'
+                    f'<span style="font-size: 0.7rem; color: #00ff88;">{percent}%</span>'
+                    '</div>'
+                    '<div style="height: 2px; background: rgba(0,255,136,0.2); border-radius: 2px;">'
+                    f'<div style="width: {percent}%; height: 100%; background: {color}; border-radius: 2px;"></div>'
+                    '</div>'
+                    '</div>'
+                )
             secondary_html_parts.append("</div>")
             st.markdown("".join(secondary_html_parts), unsafe_allow_html=True)
         
